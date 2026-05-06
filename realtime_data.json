@@ -1,0 +1,62 @@
+{
+  "601088": {
+    "name": "中国神华",
+    "price": 47.76,
+    "prev_close": 48.0,
+    "change": -0.24,
+    "change_pct": -0.5,
+    "pe_ttm": 20.09,
+    "dividend_yield": 2.9865604778496766,
+    "volume": 256009.0
+  },
+  "600900": {
+    "name": "长江电力",
+    "price": 27.1,
+    "prev_close": 27.32,
+    "change": -0.22,
+    "change_pct": -0.81,
+    "pe_ttm": 18.38,
+    "dividend_yield": 3.264417845484222,
+    "volume": 1074353.0
+  },
+  "601225": {
+    "name": "陕西煤业",
+    "price": 25.93,
+    "prev_close": 26.13,
+    "change": -0.2,
+    "change_pct": -0.77,
+    "pe_ttm": 15.55,
+    "dividend_yield": 3.858520900321543,
+    "volume": 475747.0
+  },
+  "601857": {
+    "name": "中国石油",
+    "price": 11.88,
+    "prev_close": 12.22,
+    "change": -0.34,
+    "change_pct": -2.78,
+    "pe_ttm": 13.75,
+    "dividend_yield": 4.363636363636363,
+    "volume": 1494519.0
+  },
+  "601158": {
+    "name": "重庆水务",
+    "price": 4.44,
+    "prev_close": 4.43,
+    "change": 0.01,
+    "change_pct": 0.23,
+    "pe_ttm": 25.53,
+    "dividend_yield": 2.350176263219741,
+    "volume": 84904.0
+  },
+  "600028": {
+    "name": "中国石化",
+    "price": 5.35,
+    "prev_close": 5.39,
+    "change": -0.04,
+    "change_pct": -0.74,
+    "pe_ttm": 18.2,
+    "dividend_yield": 3.296703296703297,
+    "volume": 2988960.0
+  }
+}

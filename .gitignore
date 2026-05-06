@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.env
+
+# JSON data files
+*.json
+!package.json
+
+# Valuation reports
+valuation_report_*.txt
+
+# CSV data
+dividends.csv
+holdings.csv
+transactions.csv
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,99 @@
+{
+  "portfolio_name": "能源公用事业红利组合",
+  "total_investment": 100000,
+  "start_date": "2026-05-06",
+  "investment_goal": "穿越周期，保值增值，股息覆盖10%跌幅",
+  "stocks": [
+    {
+      "name": "中国神华",
+      "code": "601088",
+      "sector": "煤炭",
+      "target_allocation": 0.20,
+      "target_amount": 20000,
+      "ideal_buy_price": 30,
+      "reasonable_buy_price": 33,
+      "cautious_buy_price": 36,
+      "expected_dividend_yield": "6-8%"
+    },
+    {
+      "name": "长江电力",
+      "code": "600900",
+      "sector": "电力",
+      "target_allocation": 0.20,
+      "target_amount": 20000,
+      "ideal_buy_price": 24,
+      "reasonable_buy_price": 27,
+      "cautious_buy_price": 30,
+      "expected_dividend_yield": "4-5%"
+    },
+    {
+      "name": "陕西煤业",
+      "code": "601225",
+      "sector": "煤炭",
+      "target_allocation": 0.15,
+      "target_amount": 15000,
+      "ideal_buy_price": 17,
+      "reasonable_buy_price": 20,
+      "cautious_buy_price": 23,
+      "expected_dividend_yield": "5-7%"
+    },
+    {
+      "name": "中国石油",
+      "code": "601857",
+      "sector": "石油",
+      "target_allocation": 0.15,
+      "target_amount": 15000,
+      "ideal_buy_price": 8,
+      "reasonable_buy_price": 9,
+      "cautious_buy_price": 10,
+      "expected_dividend_yield": "4-6%"
+    },
+    {
+      "name": "重庆水务",
+      "code": "601158",
+      "sector": "水务",
+      "target_allocation": 0.15,
+      "target_amount": 15000,
+      "ideal_buy_price": 6,
+      "reasonable_buy_price": 7,
+      "cautious_buy_price": 8,
+      "expected_dividend_yield": "4-5%"
+    },
+    {
+      "name": "中国石化",
+      "code": "600028",
+      "sector": "石化",
+      "target_allocation": 0.15,
+      "target_amount": 15000,
+      "ideal_buy_price": 6,
+      "reasonable_buy_price": 7,
+      "cautious_buy_price": 8,
+      "expected_dividend_yield": "5-6%"
+    }
+  ],
+  "purchase_plan": [
+    {
+      "phase": "第一阶段",
+      "percentage": 0.30,
+      "amount": 30000,
+      "timing": "现在-1个月内"
+    },
+    {
+      "phase": "第二阶段",
+      "percentage": 0.30,
+      "amount": 30000,
+      "timing": "1-2个月"
+    },
+    {
+      "phase": "第三阶段",
+      "percentage": 0.40,
+      "amount": 40000,
+      "timing": "2-3个月"
+    }
+  ],
+  "dividend_requirement": {
+    "max_drop": 0.10,
+    "years_to_cover": 3,
+    "min_annual_dividend_yield": 0.033
+  }
+}

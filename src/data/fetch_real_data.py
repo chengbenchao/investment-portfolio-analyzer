@@ -8,8 +8,15 @@ import requests
 import json
 import time
 import os
+import sys
 from datetime import datetime, time as dt_time
-from valuation_analysis import PortfolioValuation, STOCKS_CONFIG
+
+# 添加项目根目录到路径，确保能导入 src.core 模块
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+
+from src.core.valuation_analysis import PortfolioValuation, STOCKS_CONFIG
 
 
 def is_trading_time():
@@ -169,7 +176,7 @@ def fetch_all_stocks():
 
 def update_html(prices, stock_data):
     """更新HTML页面数据"""
-    html_path = os.path.join(os.path.dirname(__file__), 'index.html')
+    html_path = os.path.join(project_root, 'index.html')
 
     with open(html_path, 'r', encoding='utf-8') as f:
         content = f.read()
@@ -230,7 +237,7 @@ def generate_valuation_report(prices):
 
     # 保存报告，不输出任何信息
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    save_path = os.path.join(os.path.dirname(__file__), f"valuation_report_{timestamp}.txt")
+    save_path = os.path.join(project_root, "reports", f"valuation_report_{timestamp}.txt")
     portfolio.save_report(save_path)
 
 

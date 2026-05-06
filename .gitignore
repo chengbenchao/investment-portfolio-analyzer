@@ -22,13 +22,14 @@ Thumbs.db
 logs/*.log
 
 # 临时文件
-tmp/
+src/tmp/
 
-# 报告（可选，如果需要保留历史可以注释掉）
+# 报告
 reports/*.txt
 
-# 数据文件（如果需要版本控制可以注释掉）
+# 数据文件（如需版本控制可注释）
 # src/data/*.json
+# src/data/*.csv
 
 # 调试脚本
 check_*.py

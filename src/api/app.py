@@ -25,6 +25,8 @@ from functools import wraps
 # ===== 路径配置 =====
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.join(BASE_DIR, '..', '..')
+SRC_DIR = os.path.join(BASE_DIR, '..')
+sys.path.insert(0, SRC_DIR)
 sys.path.insert(0, os.path.join(BASE_DIR, '..', 'core'))
 
 # ===== 导入模块 =====

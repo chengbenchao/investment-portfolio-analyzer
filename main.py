@@ -9,8 +9,11 @@ import os
 # 添加项目根目录到路径
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from src.utils.logger import logger
-from src.api.app import app
+import sys
+import os
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'src'))
+from utils.logger import logger
+from api.app import app
 
 if __name__ == '__main__':
     logger.info("A股投资组合分析系统启动")

@@ -243,20 +243,23 @@ def generate_valuation_report(prices):
 
 def main():
     """主函数"""
+    # 临时禁用交易时间检查，用于测试
     # 检查交易时间
-    time_info = get_trading_time_info()
+    # time_info = get_trading_time_info()
+    # 
+    # if not time_info['is_trading']:
+    #     # 非交易时间：静默退出，不输出任何信息
+    #     return
     
-    if not time_info['is_trading']:
-        # 非交易时间：静默退出，不输出任何信息
-        return
-    
-    # 交易时间：静默执行，不输出任何信息，只更新文件
+    # 强制更新数据
     try:
         prices, stock_data = fetch_all_stocks()
         update_html(prices, stock_data)
         generate_valuation_report(prices)
-    except:
-        pass  # 静默忽略错误
+        print(f"数据更新成功！时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        print(f"获取到的股票数据: {prices}")
+    except Exception as e:
+        print(f"数据更新失败: {e}")
 
 
 if __name__ == "__main__":

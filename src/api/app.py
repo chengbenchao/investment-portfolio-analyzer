@@ -14,9 +14,14 @@ import sys
 from datetime import datetime
 
 # 导入深度财务分析模块
+import sys
+import os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'core'))
 from deep_financial_analysis import DeepFinancialAnalysis
 
-app = Flask(__name__, static_folder='.')
+# 设置静态文件目录为项目根目录
+PROJECT_ROOT = os.path.join(os.path.dirname(__file__), '..', '..')
+app = Flask(__name__, static_folder=PROJECT_ROOT, static_url_path='/')
 CORS(app)
 
 # 添加项目根目录到路径

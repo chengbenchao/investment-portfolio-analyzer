@@ -2,25 +2,34 @@
 __pycache__/
 *.pyc
 *.pyo
-.env
+*.egg-info/
+dist/
+build/
 
-# JSON data files
-*.json
-!package.json
-
-# Valuation reports
-valuation_report_*.txt
-
-# CSV data
-dividends.csv
-holdings.csv
-transactions.csv
+# 虚拟环境
+venv/
+.env/
 
 # IDE
 .vscode/
 .idea/
 
-# OS
+# 操作系统
 .DS_Store
 Thumbs.db
-venv/
+
+# 日志
+logs/*.log
+
+# 临时文件
+tmp/
+
+# 报告（可选，如果需要保留历史可以注释掉）
+reports/*.txt
+
+# 数据文件（如果需要版本控制可以注释掉）
+# src/data/*.json
+
+# 调试脚本
+check_*.py
+test_*.py

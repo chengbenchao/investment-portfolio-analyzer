@@ -1,15 +1,77 @@
 #!/usr/bin/env python3
 """
 定时获取A股真实数据 - 首席金融分析师版
-包含科学估值分析
+包含科学估值分析和交易时间判断
 """
 
 import requests
 import json
 import time
 import os
-from datetime import datetime
+from datetime import datetime, time as dt_time
 from valuation_analysis import PortfolioValuation, STOCKS_CONFIG
+
+
+def is_trading_time():
+    """
+    判断当前是否为A股交易时间
+
+    A股交易时间:
+    - 9:30 - 11:30 (上午)
+    - 13:00 - 15:00 (下午)
+
+    返回:
+        bool - 是否在交易时间
+    """
+    now = datetime.now()
+    current_time = now.time()
+
+    # 检查是否为周末
+    if now.weekday() >= 5:  # 0=周一, 5=周六, 6=周日
+        return False
+
+    # 上午时段:9:30 - 11:30
+    morning_start = dt_time(9, 30, 0)
+    morning_end = dt_time(11, 30, 0)
+
+    # 下午时段:13:00 - 15:00
+    afternoon_start = dt_time(13, 0, 0)
+    afternoon_end = dt_time(15, 0, 0)
+
+    if morning_start <= current_time <= morning_end:
+        return True
+    if afternoon_start <= current_time <= afternoon_end:
+        return True
+
+    return False
+
+
+def get_trading_time_info():
+    """
+    获取交易时间信息
+    """
+    now = datetime.now()
+    current_time = now.time()
+
+    info = {
+        'now': now.strftime('%Y-%m-%d %H:%M:%S'),
+        'is_trading': is_trading_time(),
+        'weekday': now.strftime('%A'),
+        'next_trading': ''
+    }
+
+    if now.weekday() >= 5:
+        info['next_trading'] = '下周一'
+    elif current_time < dt_time(9, 30, 0):
+        info['next_trading'] = '今天 9:30'
+    elif current_time < dt_time(13, 0, 0):
+        info['next_trading'] = '今天 13:00'
+    elif current_time < dt_time(15, 0, 0):
+        info['next_trading'] = '现在(交易中)'
+    else:
+        info['next_trading'] = '明天 9:30'
+
+    return info
 
 
 def detect_prefix(code):
@@ -56,7 +118,7 @@ def query_tencent_cn(code):
 
 
 def fetch_all_stocks():
-    """获取所有6只股票的真实数据"""
+    """获取所有6只股票的真实数据（静默版本）"""
     stocks = [
         '601088',
         '600900',
@@ -69,15 +131,7 @@ def fetch_all_stocks():
     results = {}
     stock_data = {}
 
-    print("=" * 70)
-    print("📊 能源公用事业投资组合 - 首席金融分析师")
-    print(f"🕐 当前时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    print("=" * 70)
-    print()
-
     for code in stocks:
-        print(f"🔍 查询 {STOCKS_CONFIG.get(code, {}).get('name', code)} ({code})...", end='', flush=True)
-
         data = query_tencent_cn(code)
 
         if data:
@@ -87,10 +141,7 @@ def fetch_all_stocks():
                 'change': data['change'],
                 'change_pct': data['change_pct']
             }
-            change_class = "📈" if data['change'] >= 0 else "📉"
-            print(f" {change_class} {data['price']:.2f} ({data['change']:+.2f}, {data['change_pct']:+.2f}%)")
         else:
-            print(" ❌ 获取失败，使用参考价格")
             # 使用默认参考价格
             if code == '601088':
                 results[code] = 47.42
@@ -172,33 +223,33 @@ def update_html(prices, stock_data):
     with open(html_path, 'w', encoding='utf-8') as f:
         f.write(content)
 
-    print(f"\n✅ HTML页面已更新: {html_path}")
-
 
 def generate_valuation_report(prices):
-    """生成估值分析报告"""
+    """生成估值分析报告（静默版本）"""
     portfolio = PortfolioValuation(prices)
 
-    # 生成报告
-    report = portfolio.generate_full_report()
-    print("\n" + report)
-
-    # 保存报告
+    # 保存报告，不输出任何信息
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     save_path = os.path.join(os.path.dirname(__file__), f"valuation_report_{timestamp}.txt")
     portfolio.save_report(save_path)
-    print(f"\n📝 详细报告已保存: {save_path}")
 
 
 def main():
     """主函数"""
-    prices, stock_data = fetch_all_stocks()
-    update_html(prices, stock_data)
-    generate_valuation_report(prices)
-
-    print("\n" + "=" * 70)
-    print("🎉 完成！刷新网页即可查看最新分析")
-    print("=" * 70)
+    # 检查交易时间
+    time_info = get_trading_time_info()
+    
+    if not time_info['is_trading']:
+        # 非交易时间：静默退出，不输出任何信息
+        return
+    
+    # 交易时间：静默执行，不输出任何信息，只更新文件
+    try:
+        prices, stock_data = fetch_all_stocks()
+        update_html(prices, stock_data)
+        generate_valuation_report(prices)
+    except:
+        pass  # 静默忽略错误
 
 
 if __name__ == "__main__":

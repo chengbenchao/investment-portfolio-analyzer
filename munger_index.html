@@ -1365,14 +1365,66 @@
         return html;
     }
 
-    // 关闭弹窗
-    document.getElementById('close-detail').addEventListener('click', () => {
-        document.getElementById('detail-modal').classList.remove('active');
-    });
-    document.getElementById('detail-modal').addEventListener('click', (e) => {
-        if (e.target.id === 'detail-modal') {
-            document.getElementById('detail-modal').classList.remove('active');
+    // 等待 DOM 加载完成后再绑定事件
+    document.addEventListener('DOMContentLoaded', function() {
+        // 关闭弹窗
+        const closeBtn = document.getElementById('close-detail');
+        const modal = document.getElementById('detail-modal');
+        if (closeBtn && modal) {
+            closeBtn.addEventListener('click', () => {
+                modal.classList.remove('active');
+            });
+            modal.addEventListener('click', (e) => {
+                if (e.target.id === 'detail-modal') {
+                    modal.classList.remove('active');
+                }
+            });
         }
+
+        // 添加股票按钮
+        const addBtn = document.getElementById('add-btn');
+        if (addBtn) {
+            addBtn.addEventListener('click', async function() {
+                const keyword = document.getElementById('stock-keyword').value.trim();
+                const sector = document.getElementById('stock-sector').value.trim();
+                if (!keyword) {
+                    alert('请输入股票名称或代码');
+                    return;
+                }
+                
+                try {
+                    const response = await fetch('/api/add', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ keyword, sector })
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        alert(data.message);
+                        document.getElementById('stock-keyword').value = '';
+                        fetchStocks();
+                    } else {
+                        alert(data.error || '添加失败');
+                    }
+                } catch (error) {
+                    console.error('添加股票失败:', error);
+                    alert('添加失败，请稍后重试');
+                }
+            });
+        }
+
+        // 刷新按钮
+        const refreshBtn = document.getElementById('refresh-btn');
+        if (refreshBtn) {
+            refreshBtn.addEventListener('click', function() {
+                fetchStocks();
+            });
+        }
+
+        // 初始化
+        fetchStocks();
+        renderChecklist();
+        renderBiases();
     });
 
     // 渲染检查清单
@@ -1441,44 +1493,7 @@
         }
     }
 
-    // 添加股票按钮
-    document.getElementById('add-btn').addEventListener('click', async function() {
-        const keyword = document.getElementById('stock-keyword').value.trim();
-        const sector = document.getElementById('stock-sector').value.trim();
-        if (!keyword) {
-            alert('请输入股票名称或代码');
-            return;
-        }
-        
-        try {
-            const response = await fetch('/api/add', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ keyword, sector })
-            });
-            const data = await response.json();
-            if (data.success) {
-                alert(data.message);
-                document.getElementById('stock-keyword').value = '';
-                fetchStocks();
-            } else {
-                alert(data.error || '添加失败');
-            }
-        } catch (error) {
-            console.error('添加股票失败:', error);
-            alert('添加失败，请稍后重试');
-        }
-    });
 
-    // 刷新按钮
-    document.getElementById('refresh-btn').addEventListener('click', function() {
-        fetchStocks();
-    });
-
-    // 初始化
-    fetchStocks();
-    renderChecklist();
-    renderBiases();
 </script>
 
 <!-- Stock Detail Modal -->

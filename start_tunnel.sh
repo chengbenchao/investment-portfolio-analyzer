@@ -1,90 +1,62 @@
 #!/bin/bash
-# 自动启动A股投资组合并获取Cloudflare Tunnel地址
+# 标准 Tunnel 入口：仅负责把本地 8002 暴露到公网
+set -euo pipefail
+cd "$(dirname "$0")"
 
-echo "=" 
-echo "🚀 启动A股投资组合服务"
-echo "=" 
+LOCAL_URL="http://127.0.0.1:8002"
+TUNNEL_LOG="${TMPDIR:-/tmp}/investment-portfolio-tunnel.log"
 
-# 停止旧的进程
-echo ""
-echo "🧹 清理旧进程..."
-pkill -f "cloudflare" 2>/dev/null
-pkill -f "python3.*http.server" 2>/dev/null
-pkill -f "python.*investment" 2>/dev/null
-sleep 2
+check_local() {
+  curl -fsS "$LOCAL_URL/" >/dev/null 2>&1
+}
 
-# 切换到项目目录
-cd /root/.openclaw/.arkclaw-team/agents/a-mojhmp2nzoh09g/workspace/investment-portfolio || exit 1
+extract_url() {
+  grep -Eo 'https://[a-z0-9.-]+\.trycloudflare\.com' "$TUNNEL_LOG" 2>/dev/null | head -1
+}
 
-# 启动Python HTTP服务器
-echo ""
-echo "🚀 启动HTTP服务器（8000端口）..."
-python3 -m http.server 8000 &
-sleep 2
-
-# 启动Cloudflare Tunnel
-echo ""
-echo "🌐 启动Cloudflare Tunnel..."
-echo "⏳ 请稍等，正在连接..."
-echo ""
-
-# 在后台启动Tunnel，保存输出到临时文件
-cloudflared tunnel --url http://localhost:8000 > /tmp/tunnel_output.txt 2>&1 &
-TUNNEL_PID=$!
-sleep 5
-
-# 检查Tunnel是否成功
-echo ""
-echo "=" 
-echo "📊 服务状态"
-echo "=" 
-echo ""
-echo "📍 本地访问: http://localhost:8000"
-echo ""
-
-# 尝试从输出文件中提取地址
-if [ -f /tmp/tunnel_output.txt ]; then
-    TUNNEL_URL=$(grep -Eo 'https://[a-z0-9.-]+\.trycloudflare\.com' /tmp/tunnel_output.txt | head -1)
-    
-    if [ -n "$TUNNEL_URL" ]; then
-        echo "🌐 公网访问: $TUNNEL_URL"
-        echo ""
-        echo "✅ 完成！"
-        echo ""
-        echo "💡 提示：如果Tunnel断开，请重新运行此脚本"
-        echo ""
-        echo "=" 
-        echo "🎯 Tunnel进程信息"
-        echo "=" 
-        echo "   Tunnel PID: $TUNNEL_PID"
-        echo "   输出文件: /tmp/tunnel_output.txt"
-        echo ""
-        echo "=" 
-        echo "⚠️  重要提示"
-        echo "=" 
-        echo "   每次重启Tunnel，地址都会变化"
-        echo "   Tunnel需要保持运行才能访问"
-        echo ""
-    else
-        echo "🔄 Tunnel正在启动中，可能需要更长时间..."
-        echo ""
-        echo "💡 可以尝试查看Tunnel输出："
-        echo "   tail -f /tmp/tunnel_output.txt"
-        echo ""
-    fi
-else
-    echo "❌ Tunnel输出文件不存在，请检查..."
-    echo ""
+if ! command -v cloudflared >/dev/null 2>&1; then
+  echo "❌ 未找到 cloudflared。"
+  echo "请先安装 Cloudflare Tunnel 客户端，再运行 ./start_tunnel.sh"
+  exit 1
 fi
 
-echo "=" 
+if ! check_local; then
+  echo "❌ 本地服务未启动：$LOCAL_URL"
+  echo "请先运行：./start.sh"
+  exit 1
+fi
 
-# 保持脚本运行，不退出
-echo ""
-echo "💡 服务已启动！"
-echo ""
-echo "💡 如果需要停止，按Ctrl+C，然后手动停止Tunnel进程"
-echo ""
+echo "🧹 清理旧 tunnel 进程..."
+pkill -f 'cloudflared tunnel --url http://127.0.0.1:8002' 2>/dev/null || true
+rm -f "$TUNNEL_LOG"
 
-# 保持脚本运行
-sleep 3600
+echo "🌐 启动 Cloudflare Quick Tunnel -> $LOCAL_URL"
+nohup cloudflared tunnel --url "$LOCAL_URL" > "$TUNNEL_LOG" 2>&1 &
+TUNNEL_PID=$!
+
+echo "⏳ 等待 tunnel 分配公网地址..."
+URL=""
+for _ in $(seq 1 20); do
+  sleep 1
+  URL=$(extract_url || true)
+  if [ -n "$URL" ]; then
+    break
+  fi
+  if ! kill -0 "$TUNNEL_PID" 2>/dev/null; then
+    echo "❌ cloudflared 启动失败，请检查日志：$TUNNEL_LOG"
+    exit 1
+  fi
+done
+
+echo ""
+echo "📊 Tunnel 状态"
+echo "- 本地服务: $LOCAL_URL"
+echo "- Tunnel PID: $TUNNEL_PID"
+echo "- Tunnel 日志: $TUNNEL_LOG"
+if [ -n "$URL" ]; then
+  echo "- 公网地址: $URL"
+  echo "✅ Tunnel 已启动"
+else
+  echo "⚠️  Tunnel 已启动，但暂未提取到公网地址"
+  echo "   可手动查看日志：tail -f $TUNNEL_LOG"
+fi

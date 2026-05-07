@@ -32,6 +32,7 @@ sys.path.insert(0, os.path.join(BASE_DIR, '..', 'core'))
 # ===== 导入模块 =====
 from utils.logger import logger
 from utils.error_handler import APIError, handle_api_error
+from data.update_status import load_status
 
 try:
     from deep_financial_analysis import DeepFinancialAnalysis
@@ -190,6 +191,20 @@ def classic_index():
     return send_from_directory(PROJECT_ROOT, 'index.html')
 
 
+@app.route('/healthz', methods=['GET'])
+def healthz():
+    """最小健康检查"""
+    return jsonify({
+        'success': True,
+        'status': 'ok',
+        'service': 'investment-portfolio-analyzer',
+        'port': 8002,
+        'default_page': 'munger_index.html',
+        'has_deep_analysis': HAS_DEEP_ANALYSIS,
+        'has_munger': HAS_MUNGER
+    })
+
+
 @app.route('/api/get_stocks', methods=['GET'])
 @handle_api_error
 def get_stocks():
@@ -303,6 +318,14 @@ def refresh_all():
 
     logger.info(f"刷新数据成功: {len(codes)}只")
     return jsonify({'success': True, 'message': f'已刷新{len(codes)}只股票'})
+
+
+@app.route('/api/status', methods=['GET'])
+@handle_api_error
+def update_status_api():
+    """获取数据更新时间与状态"""
+    status = load_status()
+    return jsonify({'success': True, 'status': status})
 
 
 @app.route('/api/deep_analysis', methods=['GET'])

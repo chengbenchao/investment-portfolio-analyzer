@@ -1,4 +1,5 @@
 #!/bin/bash
+# 历史脚本：保持兼容，统一走标准入口
+set -e
 cd "$(dirname "$0")"
-source venv/bin/activate
-python enhanced_app.py
+exec ./start.sh

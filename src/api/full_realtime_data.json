@@ -159,28 +159,5 @@
     "reasonableBuy": 47.8,
     "cautiousBuy": 56.76,
     "updateTime": "2026-05-06 23:43:50"
-  },
-  "600519": {
-    "name": "贵州茅台",
-    "price": 1375.0,
-    "change": -9.79,
-    "change_pct": -0.71,
-    "changePercent": -0.71,
-    "pe": 20.82,
-    "pb": 6.36,
-    "dividend_yield": 2.4,
-    "dividendYield": 2.4,
-    "roe": -0.0016,
-    "net_margin": 0.037599999999999995,
-    "netMargin": 0.037599999999999995,
-    "high_52w": 1523.27,
-    "high52w": 1523.27,
-    "low_52w": 1246.31,
-    "low52w": 1246.31,
-    "sector": "白酒",
-    "idealBuy": 1386.89,
-    "reasonableBuy": 1849.18,
-    "cautiousBuy": 2195.91,
-    "updateTime": "2026-05-06 23:43:50"
   }
 }

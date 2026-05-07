@@ -17,6 +17,7 @@ if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
 from src.core.valuation_analysis import PortfolioValuation, STOCKS_CONFIG
+from src.data.update_status import save_status, now_str
 
 
 def is_trading_time():
@@ -243,23 +244,32 @@ def generate_valuation_report(prices):
 
 def main():
     """主函数"""
-    # 临时禁用交易时间检查，用于测试
-    # 检查交易时间
-    # time_info = get_trading_time_info()
-    # 
-    # if not time_info['is_trading']:
-    #     # 非交易时间：静默退出，不输出任何信息
-    #     return
-    
-    # 强制更新数据
+    time_info = get_trading_time_info()
+    save_status({
+        'last_attempt_at': now_str(),
+        'last_mode': 'manual' if os.environ.get('MANUAL_UPDATE') == '1' else 'scheduled',
+        'trading_window': time_info,
+        'last_error': None
+    })
+
     try:
         prices, stock_data = fetch_all_stocks()
         update_html(prices, stock_data)
         generate_valuation_report(prices)
+        save_status({
+            'last_success_at': now_str(),
+            'last_updated_count': len(prices),
+            'last_error': None,
+            'last_prices_snapshot': prices
+        })
         print(f"数据更新成功！时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         print(f"获取到的股票数据: {prices}")
     except Exception as e:
+        save_status({
+            'last_error': str(e)
+        })
         print(f"数据更新失败: {e}")
+        raise
 
 
 if __name__ == "__main__":

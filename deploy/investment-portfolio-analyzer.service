@@ -1,0 +1,14 @@
+[Unit]
+Description=A股投资组合分析系统
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/root/.openclaw/workspace/investment-portfolio-analyzer
+ExecStart=/bin/bash /root/.openclaw/workspace/investment-portfolio-analyzer/start.sh
+Restart=on-failure
+RestartSec=3
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target

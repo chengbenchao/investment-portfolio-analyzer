@@ -37,21 +37,20 @@
 
 ## 🏗️ 技术架构
 
+> **当前标准入口以仓库实际文件为准：** `main.py` → `src/api/app.py`
+
 ```
-investment-portfolio/
-├── index.html                      # 前端网页（实时展示 + 交互）
-├── app.py                          # Flask后端API服务
-├── fetch_real_data.py              # 实时数据获取脚本
-├── deep_financial_analysis.py      # 深度财务分析模块
-├── valuation_analysis.py           # 估值分析模块
-├── financial_analysis.py           # 财报分析模块
-├── technical_analysis.py           # 技术分析模块
-├── risk_management.py              # 风险管理模块
-├── industry_research.py            # 行业研究模块
-├── macro_economy.py                # 宏观经济模块
-├── report_generator.py             # 报告生成模块
-├── full_realtime_data.json         # 实时数据缓存
-└── requirements.txt                # Python依赖
+investment-portfolio-analyzer/
+├── main.py                         # 标准 Python 启动入口
+├── start.sh                        # 标准启动脚本（唯一推荐入口）
+├── src/api/app.py                  # Flask 后端 API 服务
+├── index.html                      # 默认前端页面
+├── enhanced_index.html             # 增强版页面
+├── munger_index.html               # 芒格风格页面
+├── reports/                        # 分析报告产物
+├── logs/                           # 运行日志
+├── tmp/                            # 实验脚本（非正式入口）
+└── requirements.txt                # Python 依赖
 ```
 
 ### 技术栈
@@ -79,21 +78,92 @@ git clone https://github.com/chengbenchao/investment-portfolio-analyzer.git
 cd investment-portfolio-analyzer
 
 # 2. 安装依赖
-pip install -r requirements.txt
+python3 -m pip install -r requirements.txt
 
-# 3. 启动Flask后端服务
-python app.py
+# 3. 标准启动方式（推荐）
+./start.sh
+
+# 或直接使用 Python 入口
+python3 main.py
 ```
 
-服务将在 `http://localhost:8002` 启动。
+服务将在 `http://127.0.0.1:8002` 启动。
 
 ### 访问网页
 
-打开浏览器访问：`http://localhost:8002`
+打开浏览器访问：`http://127.0.0.1:8002`
+
+### 公网暴露（标准化入口）
+
+```bash
+# 仅启动 tunnel（要求本地 8002 服务已启动）
+./start_tunnel.sh
+
+# 一键拉起本地服务 + tunnel
+./start_public.sh
+```
+
+约定：tunnel 永远代理到 `http://127.0.0.1:8002`。
+如果未安装 `cloudflared`，脚本会直接报错并提示安装。
+
+### 最小健康检查 / smoke test
+
+健康检查接口：
+
+```bash
+curl http://127.0.0.1:8002/healthz
+```
+
+数据状态接口：
+
+```bash
+curl http://127.0.0.1:8002/api/status
+```
+
+启动前自检：
+
+```bash
+./selfcheck.sh
+```
+
+手动触发一次数据更新：
+
+```bash
+./update_data.sh
+```
+
+在本地服务启动后执行 smoke test：
+
+```bash
+./smoke_test.sh
+```
+
+它会验证：
+- `/`
+- `/classic`
+- `/healthz`
+- `/api/search?keyword=600519`
+- `/api/munger/biases`
+- `/api/get_stocks`
 
 ---
 
 ## 📡 API接口文档
+
+更完整的结构说明见：`docs/architecture.md`
+
+### 健康检查
+```
+GET /healthz
+```
+返回服务是否存活，以及当前启用的关键能力。
+
+### 获取数据状态
+```
+GET /api/status
+```
+
+返回最近一次更新尝试时间、成功时间、错误信息、交易窗口信息等。
 
 ### 获取所有股票数据
 ```
@@ -184,8 +254,13 @@ GET /api/refresh
 ## 🔄 自动更新机制
 
 ### 更新频率
-- **交易时间**：每5分钟自动更新
-- **非交易时间**：自动跳过，静默执行
+- **交易时间**：建议每5分钟自动更新
+- **非交易时间**：允许跳过，但状态文件仍应记录最近尝试/成功信息
+
+### 标准数据更新入口
+```bash
+./update_data.sh
+```
 
 ### A股交易时间
 | 时段 | 时间 |
@@ -195,15 +270,24 @@ GET /api/refresh
 
 ---
 
+## 🛠️ 守护运行准备
+
+项目已附带 systemd 服务样板：
+
+- `deploy/investment-portfolio-analyzer.service`
+
+它不是自动安装脚本，但已经把守护运行需要的最小单元文件准备好了。
+
 ## 🌐 公网访问
 
-使用 Cloudflare Quick Tunnel 暴露服务：
+项目已标准化为 Cloudflare Quick Tunnel 方案。
 
-```bash
-cloudflared tunnel --url http://localhost:8002
-```
+- **本地服务地址**：`http://127.0.0.1:8002`
+- **标准 tunnel 脚本**：`./start_tunnel.sh`
+- **标准一键公网脚本**：`./start_public.sh`
+- **tunnel 日志**：`/tmp/investment-portfolio-tunnel.log`
 
-每次启动会生成新的临时地址，格式如：
+每次启动 Quick Tunnel 都会生成新的临时地址，格式如：
 ```
 https://xxx-xxx-xxx.trycloudflare.com
 ```

@@ -40,6 +40,13 @@ except ImportError:
     HAS_DEEP_ANALYSIS = False
     logger.warning("深度财务分析模块未加载")
 
+try:
+    from munger_analysis import munger_analyzer, MungerAnalyzer
+    HAS_MUNGER = True
+except ImportError:
+    HAS_MUNGER = False
+    logger.warning("芒格分析模块未加载")
+
 # ===== Flask应用初始化 =====
 app = Flask(__name__, static_folder=PROJECT_ROOT, static_url_path='/')
 CORS(app)
@@ -174,7 +181,12 @@ def search_stock_code(keyword):
 
 @app.route('/')
 def index():
-    """首页"""
+    """首页（芒格增强版）"""
+    return send_from_directory(PROJECT_ROOT, 'munger_index.html')
+
+@app.route('/classic')
+def classic_index():
+    """经典版首页"""
     return send_from_directory(PROJECT_ROOT, 'index.html')
 
 
@@ -321,6 +333,76 @@ def deep_analysis():
         'total_score': round(total_score, 1),
         'cashflow': cashflow, 'profit': profit, 'debt': debt, 'peers': peers, 'report': report
     })
+
+
+@app.route('/api/munger/score', methods=['GET'])
+@handle_api_error
+def munger_score():
+    """获取股票芒格评分"""
+    if not HAS_MUNGER:
+        raise APIError('芒格分析模块未加载')
+
+    code = request.args.get('code', '').strip()
+    if not code:
+        raise APIError('请提供股票代码')
+
+    score = munger_analyzer.get_munger_advice({'code': code})
+    logger.info(f"芒格评分: {code}")
+    return jsonify({'success': True, 'code': code, 'munger_score': score})
+
+
+@app.route('/api/munger/portfolio', methods=['GET'])
+@handle_api_error
+def munger_portfolio():
+    """获取投资组合芒格分析"""
+    if not HAS_MUNGER:
+        raise APIError('芒格分析模块未加载')
+
+    data = load_data()
+    codes = list(data.keys())
+    realtime = get_realtime_data(codes)
+
+    stocks = []
+    for code, info in data.items():
+        r = realtime.get(code, {})
+        stocks.append({
+            'code': code,
+            'name': info.get('name', r.get('name', '')),
+            'changePercent': r.get('changePercent', 0)
+        })
+
+    analysis = munger_analyzer.generate_report_summary(stocks)
+    munger_scores = {}
+    for s in stocks:
+        score = munger_analyzer.get_munger_advice(s)
+        munger_scores[s['code']] = score
+
+    logger.info("芒格组合分析完成")
+    return jsonify({
+        'success': True,
+        'munger_portfolio': analysis,
+        'munger_scores': munger_scores,
+        'checklist': munger_analyzer.get_checklist(),
+        'biases': munger_analyzer.get_biases()
+    })
+
+
+@app.route('/api/munger/checklist', methods=['GET'])
+@handle_api_error
+def munger_checklist():
+    """获取决策检查清单"""
+    if not HAS_MUNGER:
+        raise APIError('芒格分析模块未加载')
+    return jsonify({'success': True, 'checklist': munger_analyzer.get_checklist()})
+
+
+@app.route('/api/munger/biases', methods=['GET'])
+@handle_api_error
+def munger_biases():
+    """获取心理偏差列表"""
+    if not HAS_MUNGER:
+        raise APIError('芒格分析模块未加载')
+    return jsonify({'success': True, 'biases': munger_analyzer.get_biases()})
 
 
 # ===== 启动入口 =====

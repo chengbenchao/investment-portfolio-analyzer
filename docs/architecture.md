@@ -108,10 +108,14 @@ update_data.sh
 - `GET /api/munger/checklist`
 - `GET /api/munger/biases`
 
-### 3. 健康检查 API
+### 3. 统一页面入口
+- `GET /` -> `index.html`
+- `GET /classic` -> 兼容跳转到 `/`
+
+### 4. 健康检查 API
 - `GET /healthz`
 
-### 4. 数据状态 API
+### 5. 数据状态 API
 - `GET /api/status`
 
 ### 设计意图
@@ -134,7 +138,7 @@ update_data.sh
 
 1. `.venv` 仍然不完整（只有 Python 链接，没有完整 pip/venv 能力）
 2. 历史 tunnel / 启动脚本过多，虽然已收敛，但还未彻底清理
-3. 前端多页面的定位还没有完全产品化
+3. 前端正式入口已统一到 `index.html`，历史页面已迁移到 `legacy/pages/`
 4. systemd 守护运行还只是样板，尚未安装为正式服务
 5. 数据更新目前还没有正式调度器安装，只完成了标准入口与状态落盘
 

@@ -70,6 +70,20 @@ investment-portfolio-analyzer/
 - Python 3.8+
 - pip
 
+### 脚本使用原则
+本项目 shell 脚本已分层治理，详见：`docs/script-governance.md`
+
+### 页面入口原则
+当前正式页面入口只保留一个：`/ -> index.html`
+
+- `index.html`：唯一正式页面
+- `/classic`：历史兼容网址，已统一跳转到 `/`
+- 历史页面已迁移到 `legacy/pages/`，不再作为正式入口
+
+- **优先使用正式脚本**：`start.sh` / `start_public.sh` / `start_tunnel.sh` / `update_data.sh` / `selfcheck.sh` / `smoke_test.sh` / `check-consistency.sh`
+- **兼容 / 遗留脚本已迁移到 `legacy/`**，不要再把它们当作新入口
+- **遗留脚本不是标准路径**，除非先完成重写
+
 ### 安装步骤
 
 ```bash
@@ -157,6 +171,13 @@ curl http://127.0.0.1:8002/api/status
 GET /healthz
 ```
 返回服务是否存活，以及当前启用的关键能力。
+
+### 统一首页
+```
+GET /
+```
+
+正式页面统一收敛到 `index.html`。
 
 ### 获取数据状态
 ```

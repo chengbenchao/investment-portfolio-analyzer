@@ -13,7 +13,7 @@ A股投资组合分析系统 - Flask后端API
 版本：2.0
 """
 
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory, redirect
 from flask_cors import CORS
 import requests
 import json
@@ -182,13 +182,13 @@ def search_stock_code(keyword):
 
 @app.route('/')
 def index():
-    """首页（芒格增强版）"""
-    return send_from_directory(PROJECT_ROOT, 'munger_index.html')
+    """统一正式首页"""
+    return send_from_directory(PROJECT_ROOT, 'index.html')
 
 @app.route('/classic')
 def classic_index():
-    """经典版首页"""
-    return send_from_directory(PROJECT_ROOT, 'index.html')
+    """历史兼容入口，统一跳转到正式首页"""
+    return redirect('/')
 
 
 @app.route('/healthz', methods=['GET'])
@@ -199,7 +199,7 @@ def healthz():
         'status': 'ok',
         'service': 'investment-portfolio-analyzer',
         'port': 8002,
-        'default_page': 'munger_index.html',
+        'default_page': 'index.html',
         'has_deep_analysis': HAS_DEEP_ANALYSIS,
         'has_munger': HAS_MUNGER
     })

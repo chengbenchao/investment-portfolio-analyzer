@@ -1,4 +1,5 @@
 #!/bin/bash
+# 遗留脚本：cron 配置路径已过时，需重写后才能作为正式入口
 # 设置定时任务来获取A股实时数据
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

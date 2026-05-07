@@ -47,14 +47,18 @@ python3 main.py
 - `start_public.sh`：本地服务 + tunnel 一键启动
 - `start_service.sh` / `run_simple.sh`：兼容入口，内部转发到 `start.sh`
 - `launch_tunnel.sh` / `start_and_tunnel.sh` / `start_tunnel_and_get_url.sh`：历史入口，内部转发到标准公网脚本
-- `index.html` / `enhanced_index.html` / `munger_index.html`：不同前端页面
+- `index.html`：唯一正式页面
+- `legacy/pages/`：历史页面归档目录，不作为正式入口
 - `update_data.sh`：唯一标准数据更新入口
+- `docs/script-governance.md`：脚本分层治理说明（正式 / 兼容 / 遗留）
 - `tmp/`：实验脚本，不视为正式入口
 - `logs/`：运行日志
 - `reports/`：分析报告产物
 
 ## 修改规则
 1. 不要再新增新的“主启动脚本”或“主 tunnel 脚本”，除非同时废弃旧入口。
+2. Shell 脚本身份以 `docs/script-governance.md` 为准。
+3. 非正式脚本已迁移到 `legacy/`，不要在根目录再新增平行入口。
 2. 如果改了启动方式，必须同步更新：
    - `README.md`
    - `AGENTS.md`

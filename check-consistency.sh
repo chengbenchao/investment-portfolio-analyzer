@@ -11,7 +11,7 @@ ok() { echo "✅ $1"; }
 echo "🔍 investment-portfolio-analyzer consistency check"
 
 echo "\n[1] 核心文件"
-for f in README.md AGENTS.md docs/architecture.md start.sh start_tunnel.sh start_public.sh selfcheck.sh update_data.sh main.py src/api/app.py src/data/fetch_real_data.py src/data/update_status.py requirements.txt smoke_test.sh deploy/investment-portfolio-analyzer.service; do
+for f in README.md AGENTS.md docs/architecture.md docs/script-governance.md start.sh start_tunnel.sh start_public.sh selfcheck.sh update_data.sh main.py index.html src/api/app.py src/data/fetch_real_data.py src/data/update_status.py requirements.txt smoke_test.sh deploy/investment-portfolio-analyzer.service legacy/start_service.sh legacy/run_simple.sh legacy/launch_tunnel.sh legacy/start_and_tunnel.sh legacy/start_tunnel_and_get_url.sh legacy/run_update_now.sh legacy/run_data_update.sh legacy/restart_stocks.sh legacy/pages/munger_index.html legacy/pages/enhanced_index.html; do
   [ -f "$f" ] && ok "$f" || fail "缺少 $f"
 done
 
@@ -32,6 +32,8 @@ grep -q 'smoke_test.sh' README.md && ok 'README 提到 smoke test' || warn 'READ
 grep -q '/healthz' README.md && ok 'README 提到 healthz' || warn 'README 未提到 healthz'
 grep -q '/api/status' README.md && ok 'README 提到 /api/status' || warn 'README 未提到 /api/status'
 grep -q 'update_data.sh' README.md && ok 'README 提到标准数据更新入口' || warn 'README 未提到 update_data.sh'
+grep -q 'script-governance.md' README.md && ok 'README 提到脚本治理文档' || warn 'README 未提到脚本治理文档'
+grep -q 'legacy/pages/' README.md && ok 'README 提到历史页面归档' || warn 'README 未提到 legacy/pages/'
 
 echo "\n[4] 运行时快速检查"
 python3 - <<'PY'
@@ -42,19 +44,22 @@ assert os.path.exists(os.path.join(root,'src/api/app.py'))
 print('✅ Python 路径检查通过')
 PY
 
-echo "\n[5] 兼容脚本"
-grep -q 'exec ./start.sh' start_service.sh && ok 'start_service.sh 已收敛到 start.sh' || warn 'start_service.sh 未收敛'
-grep -q 'exec ./start.sh' run_simple.sh && ok 'run_simple.sh 已收敛到 start.sh' || warn 'run_simple.sh 未收敛'
+echo "\n[5] 兼容脚本 / legacy 迁移"
+grep -q 'exec ./start.sh' legacy/start_service.sh && ok 'legacy/start_service.sh 已收敛到 start.sh' || warn 'legacy/start_service.sh 未收敛'
+grep -q 'exec ./start.sh' legacy/run_simple.sh && ok 'legacy/run_simple.sh 已收敛到 start.sh' || warn 'legacy/run_simple.sh 未收敛'
 grep -q '127.0.0.1:8002' start_tunnel.sh && ok 'start_tunnel.sh 固定代理到 127.0.0.1:8002' || fail 'start_tunnel.sh 未固定代理到 127.0.0.1:8002'
-grep -q 'exec ./start_public.sh' launch_tunnel.sh && ok 'launch_tunnel.sh 已收敛到 start_public.sh' || warn 'launch_tunnel.sh 未收敛'
-grep -q 'exec ./start_public.sh' start_and_tunnel.sh && ok 'start_and_tunnel.sh 已收敛到 start_public.sh' || warn 'start_and_tunnel.sh 未收敛'
-grep -q 'exec ./start_tunnel.sh' start_tunnel_and_get_url.sh && ok 'start_tunnel_and_get_url.sh 已收敛到 start_tunnel.sh' || warn 'start_tunnel_and_get_url.sh 未收敛'
+grep -q 'exec ./start_public.sh' legacy/launch_tunnel.sh && ok 'legacy/launch_tunnel.sh 已收敛到 start_public.sh' || warn 'legacy/launch_tunnel.sh 未收敛'
+grep -q 'exec ./start_public.sh' legacy/start_and_tunnel.sh && ok 'legacy/start_and_tunnel.sh 已收敛到 start_public.sh' || warn 'legacy/start_and_tunnel.sh 未收敛'
+grep -q 'exec ./start_tunnel.sh' legacy/start_tunnel_and_get_url.sh && ok 'legacy/start_tunnel_and_get_url.sh 已收敛到 start_tunnel.sh' || warn 'legacy/start_tunnel_and_get_url.sh 未收敛'
 grep -q '127.0.0.1:8002' smoke_test.sh && ok 'smoke_test.sh 固定测试 127.0.0.1:8002' || fail 'smoke_test.sh 未固定测试 127.0.0.1:8002'
 grep -q '/healthz' smoke_test.sh && ok 'smoke_test.sh 包含 healthz' || fail 'smoke_test.sh 未包含 healthz'
 grep -q 'selfcheck.sh' start.sh && ok 'start.sh 已接入启动前自检' || fail 'start.sh 未接入 selfcheck.sh'
 grep -q 'logs/data_update_status.json' AGENTS.md && ok 'AGENTS.md 提到数据状态文件' || warn 'AGENTS.md 未提到数据状态文件'
-grep -q 'update_data.sh' run_update_now.sh && ok 'run_update_now.sh 已收敛到 update_data.sh' || warn 'run_update_now.sh 未收敛'
-grep -q 'update_data.sh' run_data_update.sh && ok 'run_data_update.sh 已收敛到 update_data.sh' || warn 'run_data_update.sh 未收敛'
+grep -q 'legacy/pages/' AGENTS.md && ok 'AGENTS.md 提到历史页面归档目录' || warn 'AGENTS.md 未提到历史页面归档目录'
+grep -q 'update_data.sh' legacy/run_update_now.sh && ok 'legacy/run_update_now.sh 已收敛到 update_data.sh' || warn 'legacy/run_update_now.sh 未收敛'
+grep -q 'update_data.sh' legacy/run_data_update.sh && ok 'legacy/run_data_update.sh 已收敛到 update_data.sh' || warn 'legacy/run_data_update.sh 未收敛'
+grep -q '历史兼容脚本' legacy/start_service.sh && ok '兼容脚本已标注' || warn 'legacy/start_service.sh 未标注兼容身份'
+grep -q '遗留脚本' legacy/restart_stocks.sh && ok '遗留脚本已标注' || warn 'legacy/restart_stocks.sh 未标注遗留身份'
 
 echo ""
 if [ "$ERRORS" -eq 0 ]; then

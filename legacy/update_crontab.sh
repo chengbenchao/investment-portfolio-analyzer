@@ -1,4 +1,5 @@
 #!/bin/bash
+# 遗留脚本：cron 覆盖逻辑仍依赖旧命令，需重写后才能正式使用
 # 更新定时任务配置，添加A股数据自动更新
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

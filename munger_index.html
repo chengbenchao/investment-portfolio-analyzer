@@ -4,695 +4,868 @@
 &lt;head&gt;
     &lt;meta charset="UTF-8"&gt;
     &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
-    &lt;title&gt;📊 芒格智慧 - 专业A股投资分析平台&lt;/title&gt;
-    &lt;link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"&gt;
+    &lt;title&gt;📊 芒格智慧 - A股投资分析系统&lt;/title&gt;
+    &lt;link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Noto+Sans+SC:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"&gt;
     &lt;style&gt;
-        *{margin:0;padding:0;box-sizing:border-box}
+        :root{
+            --bg-primary:#0d1117;
+            --bg-secondary:#161b22;
+            --bg-tertiary:#21262d;
+            --border-color:#30363d;
+            --text-primary:#e6edf3;
+            --text-secondary:#8b949e;
+            --text-tertiary:#6e7681;
+            --accent-green:#238636;
+            --accent-green-light:#2ea043;
+            --accent-red:#f85149;
+            --accent-orange:#d29922;
+            --accent-blue:#58a6ff;
+        }
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
+
         body{
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(180deg, #0a0e1a 0%, #111827 50%, #0f172a 100%);
-            min-height: 100vh;
-            color: #e5e7eb;
-            line-height: 1.6;
+            font-family:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+            background:var(--bg-primary);
+            color:var(--text-primary);
+            min-height:100vh;
+            font-size:14px;
+            line-height:1.5;
         }
 
-        /* 容器 */
-        .container{
-            max-width: 1500px;
-            margin: 0 auto;
-            padding: 24px;
+        /* Header */
+        .app-header{
+            background:var(--bg-secondary);
+            border-bottom:1px solid var(--border-color);
+            padding:0 32px;
+            position:sticky;
+            top:0;
+            z-index:100;
         }
 
-        /* 顶部通知栏 */
-        .top-bar{
-            background: linear-gradient(90deg, #1f2937 0%, #111827 100%);
-            border-bottom: 1px solid #374151;
-            padding: 12px 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
+        .header-inner{
+            max-width:1600px;
+            margin:0 auto;
+            height:64px;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
         }
 
-        .top-bar-left{
-            display: flex;
-            gap: 16px;
-            align-items: center;
+        .header-left{
+            display:flex;
+            align-items:center;
+            gap:24px;
         }
 
-        .top-bar-left h1{
-            font-size: 18px;
-            font-weight: 700;
-            background: linear-gradient(90deg, #059669 0%, #0d9488 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        .logo{
+            display:flex;
+            align-items:center;
+            gap:12px;
+            font-size:20px;
+            font-weight:700;
+            color:var(--text-primary);
+        }
+
+        .logo-icon{
+            font-size:28px;
+        }
+
+        .nav{
+            display:flex;
+            gap:8px;
+        }
+
+        .nav-item{
+            padding:8px 16px;
+            border-radius:8px;
+            color:var(--text-secondary);
+            font-weight:500;
+            cursor:pointer;
+            transition:all 0.2s ease;
+        }
+
+        .nav-item:hover{
+            background:var(--bg-tertiary);
+            color:var(--text-primary);
+        }
+
+        .nav-item.active{
+            background:var(--bg-tertiary);
+            color:var(--text-primary);
+        }
+
+        .header-right{
+            display:flex;
+            align-items:center;
+            gap:16px;
+        }
+
+        .status-indicator{
+            display:flex;
+            align-items:center;
+            gap:8px;
+            color:var(--text-secondary);
+            font-size:13px;
         }
 
         .status-dot{
-            width: 8px;
-            height: 8px;
-            background: #22c55e;
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-
-        .status-text{
-            color: #9ca3af;
-            font-size: 13px;
+            width:8px;
+            height:8px;
+            background:var(--accent-green);
+            border-radius:50%;
+            animation:pulse 2s infinite;
         }
 
         @keyframes pulse{
             0%,100%{opacity:1;transform:scale(1)}
-            50%{opacity:0.6;transform:scale(1.2)}
+            50%{opacity:0.7;transform:scale(1.1)}
         }
 
-        /* 主内容区域 */
-        .main-grid{
-            display: grid;
-            grid-template-columns: 320px 1fr;
-            gap: 24px;
-            margin-top: 24px;
+        /* Main Layout */
+        .app-container{
+            max-width:1600px;
+            margin:0 auto;
+            padding:24px 32px;
+            display:grid;
+            grid-template-columns:280px 1fr;
+            gap:24px;
         }
 
-        /* 侧边栏 */
+        /* Sidebar */
         .sidebar{
-            background: #111827;
-            border-radius: 12px;
-            padding: 24px;
-            border: 1px solid #1f2937;
-            height: fit-content;
-            position: sticky;
-            top: 80px;
-        }
-
-        .sidebar-title{
-            font-size: 12px;
-            font-weight: 600;
-            color: #9ca3af;
-            margin-bottom: 16px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            background:var(--bg-secondary);
+            border:1px solid var(--border-color);
+            border-radius:12px;
+            padding:20px;
+            height:fit-content;
+            position:sticky;
+            top:88px;
         }
 
         .sidebar-section{
-            margin-bottom: 28px;
+            margin-bottom:28px;
+        }
+
+        .sidebar-title{
+            font-size:11px;
+            font-weight:600;
+            color:var(--text-tertiary);
+            text-transform:uppercase;
+            letter-spacing:0.5px;
+            margin-bottom:12px;
+            padding:0 4px;
+        }
+
+        .sidebar-menu{
+            display:flex;
+            flex-direction:column;
+            gap:4px;
         }
 
         .sidebar-item{
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 8px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            color: #d1d5db;
+            padding:10px 12px;
+            border-radius:8px;
+            color:var(--text-secondary);
+            font-weight:500;
+            cursor:pointer;
+            display:flex;
+            align-items:center;
+            gap:10px;
+            transition:all 0.2s ease;
         }
 
         .sidebar-item:hover{
-            background: #1f2937;
+            background:var(--bg-tertiary);
+            color:var(--text-primary);
         }
 
-        .sidebar-item-icon{
-            font-size: 20px;
+        .sidebar-item.active{
+            background:rgba(35,134,54,0.15);
+            color:var(--accent-green-light);
         }
 
-        /* 主内容区 */
+        .sidebar-icon{
+            font-size:16px;
+        }
+
+        /* Main Content */
         .main-content{
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
+            display:flex;
+            flex-direction:column;
+            gap:20px;
         }
 
-        /* 重要信息卡片 */
-        .munger-status-grid{
-            display: grid;
-            grid-template-columns: repeat(4,1fr);
-            gap: 16px;
+        /* Dashboard Grid */
+        .dashboard-grid{
+            display:grid;
+            grid-template-columns:repeat(4,1fr);
+            gap:16px;
         }
 
-        .munger-card{
-            background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
-            border: 1px solid #374151;
-            border-radius: 12px;
-            padding: 20px;
+        .metric-card{
+            background:var(--bg-secondary);
+            border:1px solid var(--border-color);
+            border-radius:12px;
+            padding:20px;
+            transition:all 0.2s ease;
         }
 
-        .munger-card-header{
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
+        .metric-card:hover{
+            border-color:var(--accent-blue);
+            transform:translateY(-2px);
         }
 
-        .munger-card-title{
-            font-size: 12px;
-            font-weight: 600;
-            color: #9ca3af;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+        .metric-header{
+            display:flex;
+            justify-content:space-between;
+            align-items:flex-start;
+            margin-bottom:12px;
         }
 
-        .munger-card-value{
-            font-size: 28px;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 4px;
+        .metric-label{
+            font-size:12px;
+            font-weight:500;
+            color:var(--text-tertiary);
+            text-transform:uppercase;
+            letter-spacing:0.3px;
         }
 
-        .munger-card-desc{
-            font-size: 13px;
-            color: #6b7280;
+        .metric-value{
+            font-size:28px;
+            font-weight:700;
+            color:var(--text-primary);
+            line-height:1.2;
+            margin-bottom:4px;
         }
 
-        /* 主要内容卡片 */
-        .card{
-            background: #111827;
-            border-radius: 12px;
-            border: 1px solid #1f2937;
+        .metric-desc{
+            font-size:13px;
+            color:var(--text-secondary);
         }
 
-        .card-header{
-            padding: 20px 24px;
-            border-bottom: 1px solid #1f2937;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        /* Table Section */
+        .section-card{
+            background:var(--bg-secondary);
+            border:1px solid var(--border-color);
+            border-radius:12px;
+            overflow:hidden;
         }
 
-        .card-title{
-            font-size: 16px;
-            font-weight: 600;
-            color: #f9fafb;
+        .section-header{
+            padding:16px 20px;
+            border-bottom:1px solid var(--border-color);
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
         }
 
-        .card-body{
-            padding: 24px;
+        .section-title{
+            font-size:15px;
+            font-weight:600;
+            color:var(--text-primary);
         }
 
-        /* 数据表格 */
-        .table-container{
-            overflow-x: auto;
-        }
-
-        table{
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        thead th{
-            background: #0f172a;
-            color: #9ca3af;
-            font-weight: 600;
-            font-size: 12px;
-            padding: 12px 16px;
-            text-align: left;
-            border-bottom: 1px solid #1f2937;
-        }
-
-        tbody td{
-            padding: 16px;
-            font-size: 14px;
-            color: #d1d5db;
-            border-bottom: 1px solid #1f2937;
-        }
-
-        tbody tr:hover{
-            background: #0f172a;
-        }
-
-        .stock-name{
-            font-weight: 600;
-            color: #f9fafb;
-            margin-bottom: 4px;
-        }
-
-        .stock-code{
-            font-size: 12px;
-            color: #6b7280;
-        }
-
-        /* 价格信息 */
-        .price{
-            font-size: 16px;
-            font-weight: 700;
-            color: #60a5fa;
-        }
-
-        .change-up{
-            color: #22c55e;
-            background: rgba(34,197,94,0.1);
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: 600;
-            margin-left: 8px;
-        }
-
-        .change-down{
-            color: #f87171;
-            background: rgba(248,113,113,0.1);
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: 600;
-            margin-left: 8px;
-        }
-
-        /* 评分展示 */
-        .score-badge{
-            padding: 4px 12px;
-            border-radius: 8px;
-            font-weight: 700;
-            font-size: 14px;
-        }
-
-        .score-excellent{
-            background: rgba(34,197,94,0.15);
-            color: #4ade80;
-        }
-
-        .score-good{
-            background: rgba(250,204,21,0.15);
-            color: #facc15;
-        }
-
-        .score-average{
-            background: rgba(251,146,60,0.15);
-            color: #fb923c;
-        }
-
-        .score-poor{
-            background: rgba(248,113,113,0.15);
-            color: #f87171;
-        }
-
-        /* 建议标签 */
-        .advice-badge{
-            padding: 4px 12px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 13px;
-        }
-
-        .advice-hold{
-            background: rgba(34,197,94,0.15);
-            color: #4ade80;
-            border: 1px solid rgba(34,197,94,0.3);
-        }
-
-        .advice-wait{
-            background: rgba(250,204,21,0.15);
-            color: #facc15;
-            border: 1px solid rgba(250,204,21,0.3);
-        }
-
-        .advice-watch{
-            background: rgba(248,113,113,0.15);
-            color: #f87171;
-            border: 1px solid rgba(248,113,113,0.3);
-        }
-
-        /* 检查清单项 */
-        .checklist-item{
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 16px;
-            background: #0f172a;
-            border-radius: 8px;
-            margin-bottom: 12px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .checklist-item:hover{
-            background: #1f2937;
-        }
-
-        .checklist-checkbox{
-            width: 22px;
-            height: 22px;
-            border: 2px solid #374151;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .checklist-checkbox.checked{
-            background: linear-gradient(135deg, #22c55e, #16a34a);
-            border-color: #22c55e;
-        }
-
-        .checklist-checkbox.checked::after{
-            content: '✓';
-            color: white;
-            font-weight: bold;
-        }
-
-        /* 心理偏差项 */
-        .bias-item{
-            padding: 16px;
-            background: rgba(248,113,113,0.05);
-            border-left: 3px solid #f87171;
-            margin-bottom: 12px;
-            border-radius: 6px;
-        }
-
-        /* 添加股票区域 */
-        .add-stock-area{
-            display: flex;
-            gap: 12px;
-            margin-bottom: 24px;
-        }
-
-        .add-stock-input{
-            flex: 1;
-        }
-
-        .add-stock-input label{
-            display: block;
-            color: #9ca3af;
-            font-size: 12px;
-            font-weight: 600;
-            margin-bottom: 6px;
-        }
-
-        .add-stock-input input{
-            width: 100%;
-            padding: 12px 16px;
-            background: #0f172a;
-            border: 1px solid #374151;
-            border-radius: 6px;
-            color: #f9fafb;
-            font-size: 14px;
-        }
-
-        .add-stock-input input:focus{
-            outline: none;
-            border-color: #059669;
+        .section-actions{
+            display:flex;
+            gap:10px;
         }
 
         .btn{
-            padding: 12px 24px;
-            border: none;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
+            padding:8px 16px;
+            border-radius:8px;
+            font-size:13px;
+            font-weight:600;
+            cursor:pointer;
+            border:none;
+            transition:all 0.2s ease;
         }
 
         .btn-primary{
-            background: linear-gradient(135deg, #059669 0%, #047857 100%);
-            color: white;
+            background:var(--accent-green);
+            color:white;
         }
 
         .btn-primary:hover{
-            transform: translateY(-1px);
+            background:var(--accent-green-light);
         }
 
-        /* 原则列表 */
-        .principles-grid{
-            display: grid;
-            grid-template-columns: repeat(2,1fr);
-            gap: 16px;
+        .btn-secondary{
+            background:var(--bg-tertiary);
+            color:var(--text-primary);
+            border:1px solid var(--border-color);
         }
 
-        .principle-item{
-            padding: 16px;
-            background: #0f172a;
-            border-radius: 8px;
-            border: 1px solid #1f2937;
+        .btn-secondary:hover{
+            background:#2d333b;
+        }
+
+        .section-body{
+            padding:0;
+        }
+
+        /* Data Table */
+        .data-table{
+            width:100%;
+            border-collapse:collapse;
+        }
+
+        .data-table thead th{
+            background:var(--bg-primary);
+            padding:12px 16px;
+            text-align:left;
+            font-size:12px;
+            font-weight:600;
+            color:var(--text-tertiary);
+            text-transform:uppercase;
+            letter-spacing:0.5px;
+            border-bottom:1px solid var(--border-color);
+        }
+
+        .data-table tbody td{
+            padding:16px;
+            border-bottom:1px solid var(--border-color);
+            color:var(--text-secondary);
+        }
+
+        .data-table tbody tr{
+            cursor:pointer;
+            transition:all 0.15s ease;
+        }
+
+        .data-table tbody tr:hover{
+            background:rgba(88,166,255,0.06);
+        }
+
+        .stock-info{
+            display:flex;
+            flex-direction:column;
+            gap:4px;
+        }
+
+        .stock-name{
+            font-size:14px;
+            font-weight:600;
+            color:var(--text-primary);
+        }
+
+        .stock-meta{
+            font-size:12px;
+            color:var(--text-tertiary);
+        }
+
+        .price{
+            font-size:16px;
+            font-weight:700;
+            color:var(--text-primary);
+        }
+
+        .change-up{
+            color:var(--accent-green);
+            font-size:13px;
+            font-weight:600;
+        }
+
+        .change-down{
+            color:var(--accent-red);
+            font-size:13px;
+            font-weight:600;
+        }
+
+        .score-badge{
+            padding:4px 10px;
+            border-radius:6px;
+            font-size:13px;
+            font-weight:700;
+        }
+
+        .score-excellent{
+            background:rgba(35,134,54,0.15);
+            color:var(--accent-green-light);
+        }
+
+        .score-good{
+            background:rgba(210,153,34,0.15);
+            color:var(--accent-orange);
+        }
+
+        .score-average{
+            background:rgba(248,81,73,0.1);
+            color:#ffa657;
+        }
+
+        .score-poor{
+            background:rgba(248,81,73,0.15);
+            color:var(--accent-red);
+        }
+
+        .advice-badge{
+            padding:4px 10px;
+            border-radius:6px;
+            font-size:13px;
+            font-weight:600;
+            display:inline-flex;
+            align-items:center;
+            gap:4px;
+        }
+
+        .advice-hold{
+            background:rgba(35,134,54,0.15);
+            color:var(--accent-green-light);
+        }
+
+        .advice-wait{
+            background:rgba(210,153,34,0.15);
+            color:#ffa657;
+        }
+
+        .advice-watch{
+            background:rgba(248,81,73,0.1);
+            color:#ffa657;
+        }
+
+        /* Checklist */
+        .checklist-container{
+            padding:16px 20px;
+        }
+
+        .checklist-item{
+            display:flex;
+            align-items:center;
+            gap:12px;
+            padding:14px 16px;
+            background:var(--bg-primary);
+            border:1px solid var(--border-color);
+            border-radius:8px;
+            margin-bottom:10px;
+            cursor:pointer;
+            transition:all 0.2s ease;
+        }
+
+        .checklist-item:hover{
+            border-color:var(--accent-blue);
+            background:var(--bg-tertiary);
+        }
+
+        .checklist-checkbox{
+            width:20px;
+            height:20px;
+            border:2px solid var(--border-color);
+            border-radius:4px;
+            flex-shrink:0;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            transition:all 0.2s ease;
+        }
+
+        .checklist-checkbox.checked{
+            background:var(--accent-green);
+            border-color:var(--accent-green);
+        }
+
+        .checklist-checkbox.checked::after{
+            content:'✓';
+            color:white;
+            font-size:13px;
+            font-weight:700;
+        }
+
+        .checklist-text{
+            color:var(--text-secondary);
+            font-weight:500;
+        }
+
+        .checklist-item.completed .checklist-text{
+            color:var(--accent-green);
+        }
+
+        /* Biases */
+        .biases-container{
+            padding:16px 20px;
+        }
+
+        .bias-item{
+            display:flex;
+            gap:12px;
+            padding:14px 16px;
+            background:rgba(248,81,73,0.06);
+            border-left:3px solid var(--accent-red);
+            border-radius:0 8px 8px 0;
+            margin-bottom:10px;
+        }
+
+        .bias-icon{
+            font-size:18px;
+        }
+
+        .bias-text{
+            color:var(--text-secondary);
+            font-size:14px;
+        }
+
+        /* Principles */
+        .principles-container{
+            padding:20px;
+            display:grid;
+            grid-template-columns:repeat(3,1fr);
+            gap:16px;
+        }
+
+        .principle-card{
+            padding:20px;
+            background:var(--bg-primary);
+            border:1px solid var(--border-color);
+            border-radius:12px;
+            transition:all 0.2s ease;
+        }
+
+        .principle-card:hover{
+            border-color:var(--accent-blue);
+            transform:translateY(-2px);
         }
 
         .principle-icon{
-            font-size: 20px;
-            margin-bottom: 8px;
+            font-size:24px;
+            margin-bottom:12px;
         }
 
         .principle-title{
-            font-size: 14px;
-            font-weight: 600;
-            color: #d1d5db;
-            margin-bottom: 4px;
+            font-size:15px;
+            font-weight:600;
+            color:var(--text-primary);
+            margin-bottom:6px;
         }
 
         .principle-desc{
-            font-size: 13px;
-            color: #6b7280;
+            font-size:13px;
+            color:var(--text-secondary);
+            line-height:1.6;
         }
 
-        /* 响应式 */
-        @media(max-width: 1024px){
-            .main-grid{
-                grid-template-columns: 1fr;
+        /* Add Stock */
+        .add-stock-container{
+            padding:16px 20px;
+            background:var(--bg-primary);
+            border-bottom:1px solid var(--border-color);
+        }
+
+        .add-stock-form{
+            display:flex;
+            gap:12px;
+            align-items:flex-end;
+        }
+
+        .form-group{
+            flex:1;
+        }
+
+        .form-group label{
+            display:block;
+            font-size:12px;
+            font-weight:600;
+            color:var(--text-tertiary);
+            margin-bottom:6px;
+            text-transform:uppercase;
+            letter-spacing:0.3px;
+        }
+
+        .form-group input{
+            width:100%;
+            padding:10px 12px;
+            background:var(--bg-secondary);
+            border:1px solid var(--border-color);
+            border-radius:8px;
+            color:var(--text-primary);
+            font-size:14px;
+            transition:all 0.2s ease;
+        }
+
+        .form-group input:focus{
+            outline:none;
+            border-color:var(--accent-blue);
+            box-shadow:0 0 0 3px rgba(88,166,255,0.15);
+        }
+
+        /* Responsive */
+        @media(max-width:1200px){
+            .dashboard-grid{
+                grid-template-columns:repeat(2,1fr);
+            }
+            .principles-container{
+                grid-template-columns:repeat(2,1fr);
+            }
+        }
+
+        @media(max-width:900px){
+            .app-container{
+                grid-template-columns:1fr;
+                padding:16px;
             }
             .sidebar{
-                position: static;
-            }
-            .munger-status-grid{
-                grid-template-columns: repeat(2,1fr);
+                position:static;
             }
         }
 
-        @media(max-width: 768px){
-            .munger-status-grid{
-                grid-template-columns: 1fr;
+        @media(max-width:640px){
+            .dashboard-grid{
+                grid-template-columns:1fr;
             }
-            .principles-grid{
-                grid-template-columns: 1fr;
+            .principles-container{
+                grid-template-columns:1fr;
+            }
+            .header-inner{
+                padding:0 16px;
             }
         }
     &lt;/style&gt;
 &lt;/head&gt;
 &lt;body&gt;
 
-&lt;div class="top-bar"&gt;
-    &lt;div class="top-bar-left"&gt;
-        &lt;div style="display:flex;align-items:center;gap:12px;"&gt;
-            &lt;h1&gt;📊 芒格智慧 - 专业投资分析平台&lt;/h1&gt;
+&lt;!-- Header --&gt;
+&lt;header class="app-header"&gt;
+    &lt;div class="header-inner"&gt;
+        &lt;div class="header-left"&gt;
+            &lt;div class="logo"&gt;
+                &lt;span class="logo-icon"&gt;📊&lt;/span&gt;
+                &lt;span&gt;芒格智慧&lt;/span&gt;
+            &lt;/div&gt;
+            &lt;nav class="nav"&gt;
+                &lt;div class="nav-item active"&gt;概览&lt;/div&gt;
+                &lt;div class="nav-item"&gt;组合&lt;/div&gt;
+                &lt;div class="nav-item"&gt;分析&lt;/div&gt;
+            &lt;/nav&gt;
+        &lt;/div&gt;
+        &lt;div class="header-right"&gt;
+            &lt;div class="status-indicator"&gt;
+                &lt;div class="status-dot"&gt;&lt;/div&gt;
+                &lt;span id="time-display"&gt;运行中&lt;/span&gt;
+            &lt;/div&gt;
         &lt;/div&gt;
     &lt;/div&gt;
-    &lt;div style="display:flex;align-items:center;gap:12px;"&gt;
-        &lt;div class="status-dot"&gt;&lt;/div&gt;
-        &lt;span class="status-text" id="time-display"&gt;实时运行中&lt;/span&gt;
-    &lt;/div&gt;
-&lt;/div&gt;
+&lt;/header&gt;
 
-&lt;div class="container"&gt;
-    &lt;div class="main-grid"&gt;
-        &lt;!-- 侧边栏 --&gt;
-        &lt;div class="sidebar"&gt;
-            &lt;div class="sidebar-section"&gt;
-                &lt;div class="sidebar-title"&gt;导航菜单&lt;/div&gt;
-                &lt;div class="sidebar-item"&gt;
-                    &lt;span class="sidebar-item-icon"&gt;📈&lt;/span&gt;
+&lt;!-- Main Content --&gt;
+&lt;div class="app-container"&gt;
+    &lt;!-- Sidebar --&gt;
+    &lt;aside class="sidebar"&gt;
+        &lt;div class="sidebar-section"&gt;
+            &lt;div class="sidebar-title"&gt;主要功能&lt;/div&gt;
+            &lt;div class="sidebar-menu"&gt;
+                &lt;div class="sidebar-item active"&gt;
+                    &lt;span class="sidebar-icon"&gt;📈&lt;/span&gt;
                     &lt;span&gt;投资组合&lt;/span&gt;
                 &lt;/div&gt;
                 &lt;div class="sidebar-item"&gt;
-                    &lt;span class="sidebar-item-icon"&gt;🧠&lt;/span&gt;
+                    &lt;span class="sidebar-icon"&gt;🧠&lt;/span&gt;
                     &lt;span&gt;芒格分析&lt;/span&gt;
                 &lt;/div&gt;
                 &lt;div class="sidebar-item"&gt;
-                    &lt;span class="sidebar-item-icon"&gt;✅&lt;/span&gt;
+                    &lt;span class="sidebar-icon"&gt;✅&lt;/span&gt;
                     &lt;span&gt;决策检查&lt;/span&gt;
                 &lt;/div&gt;
                 &lt;div class="sidebar-item"&gt;
-                    &lt;span class="sidebar-item-icon"&gt;⚠️&lt;/span&gt;
+                    &lt;span class="sidebar-icon"&gt;⚠️&lt;/span&gt;
                     &lt;span&gt;心理偏差&lt;/span&gt;
                 &lt;/div&gt;
                 &lt;div class="sidebar-item"&gt;
-                    &lt;span class="sidebar-item-icon"&gt;📚&lt;/span&gt;
+                    &lt;span class="sidebar-icon"&gt;📚&lt;/span&gt;
                     &lt;span&gt;投资原则&lt;/span&gt;
                 &lt;/div&gt;
             &lt;/div&gt;
+        &lt;/div&gt;
 
-            &lt;div class="sidebar-section"&gt;
-                &lt;div class="sidebar-title"&gt;市场概览&lt;/div&gt;
-                &lt;div style="color:#6b7280;font-size:13px;"&gt;
-                    上次更新：刚刚
+        &lt;div class="sidebar-section"&gt;
+            &lt;div class="sidebar-title"&gt;系统状态&lt;/div&gt;
+            &lt;div style="padding:8px 0;color:var(--text-tertiary);font-size:13px;"&gt;
+                上次更新：刚刚
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/aside&gt;
+
+    &lt;!-- Main Area --&gt;
+    &lt;main class="main-content"&gt;
+        &lt;!-- Dashboard Metrics --&gt;
+        &lt;div class="dashboard-grid"&gt;
+            &lt;div class="metric-card"&gt;
+                &lt;div class="metric-header"&gt;
+                    &lt;div class="metric-label"&gt;冷静期状态&lt;/div&gt;
+                    &lt;span style="color:var(--accent-green-light);"&gt;✅&lt;/span&gt;
+                &lt;/div&gt;
+                &lt;div class="metric-value"&gt;已就绪&lt;/div&gt;
+                &lt;div class="metric-desc"&gt;距离上次决策已超过24小时&lt;/div&gt;
+            &lt;/div&gt;
+
+            &lt;div class="metric-card"&gt;
+                &lt;div class="metric-header"&gt;
+                    &lt;div class="metric-label"&gt;检查清单&lt;/div&gt;
+                &lt;/div&gt;
+                &lt;div class="metric-value" id="checklist-progress"&gt;0/7&lt;/div&gt;
+                &lt;div class="metric-desc"&gt;已完成的决策检查项&lt;/div&gt;
+            &lt;/div&gt;
+
+            &lt;div class="metric-card"&gt;
+                &lt;div class="metric-header"&gt;
+                    &lt;div class="metric-label"&gt;市场情绪&lt;/div&gt;
+                &lt;/div&gt;
+                &lt;div class="metric-value" id="market-mood"&gt;中性&lt;/div&gt;
+                &lt;div class="metric-desc"&gt;当前整体市场状态&lt;/div&gt;
+            &lt;/div&gt;
+
+            &lt;div class="metric-card"&gt;
+                &lt;div class="metric-header"&gt;
+                    &lt;div class="metric-label"&gt;组合评分&lt;/div&gt;
+                &lt;/div&gt;
+                &lt;div class="metric-value" id="avg-score"&gt;--/10&lt;/div&gt;
+                &lt;div class="metric-desc"&gt;整体投资组合质量评分&lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;!-- Add Stock --&gt;
+        &lt;div class="section-card"&gt;
+            &lt;div class="section-header"&gt;
+                &lt;div class="section-title"&gt;📈 添加新股票&lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div class="add-stock-container"&gt;
+                &lt;div class="add-stock-form"&gt;
+                    &lt;div class="form-group"&gt;
+                        &lt;label&gt;股票名称/代码&lt;/label&gt;
+                        &lt;input type="text" id="stock-keyword" placeholder="例如：贵州茅台 或 600519"&gt;
+                    &lt;/div&gt;
+                    &lt;div class="form-group" style="max-width:220px;"&gt;
+                        &lt;label&gt;所属行业&lt;/label&gt;
+                        &lt;input type="text" id="stock-sector" value="其他"&gt;
+                    &lt;/div&gt;
+                    &lt;button class="btn btn-primary" id="add-btn"&gt;添加&lt;/button&gt;
                 &lt;/div&gt;
             &lt;/div&gt;
         &lt;/div&gt;
 
-        &lt;!-- 主内容 --&gt;
-        &lt;div class="main-content"&gt;
-            &lt;!-- 芒格状态卡片 --&gt;
-            &lt;div class="munger-status-grid"&gt;
-                &lt;div class="munger-card"&gt;
-                    &lt;div class="munger-card-header"&gt;
-                        &lt;div class="munger-card-title"&gt;冷静期状态&lt;/div&gt;
-                        &lt;span style="color:#22c55e;"&gt;✅&lt;/span&gt;
-                    &lt;/div&gt;
-                    &lt;div class="munger-card-value"&gt;已就绪&lt;/div&gt;
-                    &lt;div class="munger-card-desc"&gt;距离上次决策已超过24小时&lt;/div&gt;
-                &lt;/div&gt;
-
-                &lt;div class="munger-card"&gt;
-                    &lt;div class="munger-card-header"&gt;
-                        &lt;div class="munger-card-title"&gt;检查清单&lt;/div&gt;
-                    &lt;/div&gt;
-                    &lt;div class="munger-card-value" id="checklist-progress"&gt;0/7&lt;/div&gt;
-                    &lt;div class="munger-card-desc"&gt;已完成的决策检查项&lt;/div&gt;
-                &lt;/div&gt;
-
-                &lt;div class="munger-card"&gt;
-                    &lt;div class="munger-card-header"&gt;
-                        &lt;div class="munger-card-title"&gt;市场情绪&lt;/div&gt;
-                    &lt;/div&gt;
-                    &lt;div class="munger-card-value" id="market-mood"&gt;中性&lt;/div&gt;
-                    &lt;div class="munger-card-desc"&gt;当前整体市场状态&lt;/div&gt;
-                &lt;/div&gt;
-
-                &lt;div class="munger-card"&gt;
-                    &lt;div class="munger-card-header"&gt;
-                        &lt;div class="munger-card-title"&gt;组合评分&lt;/div&gt;
-                    &lt;/div&gt;
-                    &lt;div class="munger-card-value" id="avg-score"&gt;--/10&lt;/div&gt;
-                    &lt;div class="munger-card-desc"&gt;整体投资组合质量评分&lt;/div&gt;
+        &lt;!-- Portfolio Table --&gt;
+        &lt;div class="section-card"&gt;
+            &lt;div class="section-header"&gt;
+                &lt;div class="section-title"&gt;📊 投资组合&lt;/div&gt;
+                &lt;div class="section-actions"&gt;
+                    &lt;button class="btn btn-secondary" id="refresh-btn"&gt;刷新数据&lt;/button&gt;
                 &lt;/div&gt;
             &lt;/div&gt;
-
-            &lt;!-- 添加股票区域 --&gt;
-            &lt;div class="card"&gt;
-                &lt;div class="card-header"&gt;
-                    &lt;div class="card-title"&gt;📈 添加新股票&lt;/div&gt;
-                &lt;/div&gt;
-                &lt;div class="card-body"&gt;
-                    &lt;div class="add-stock-area"&gt;
-                        &lt;div class="add-stock-input"&gt;
-                            &lt;label&gt;股票名称/代码&lt;/label&gt;
-                            &lt;input type="text" id="stock-keyword" placeholder="例如：贵州茅台 或 600519"&gt;
-                        &lt;/div&gt;
-                        &lt;div class="add-stock-input" style="max-width:200px;"&gt;
-                            &lt;label&gt;所属行业&lt;/label&gt;
-                            &lt;input type="text" id="stock-sector" value="其他"&gt;
-                        &lt;/div&gt;
-                        &lt;div style="display:flex;align-items:flex-end;"&gt;
-                            &lt;button class="btn btn-primary" id="add-stock-btn"&gt;添加&lt;/button&gt;
-                        &lt;/div&gt;
-                    &lt;/div&gt;
-                &lt;/div&gt;
-
-            &lt;!-- 投资组合表格 --&gt;
-            &lt;div class="card"&gt;
-                &lt;div class="card-header"&gt;
-                    &lt;div class="card-title"&gt;📊 投资组合概览&lt;/div&gt;
-                    &lt;button class="btn btn-primary" id="refresh-btn"&gt;刷新数据&lt;/button&gt;
-                &lt;/div&gt;
-                &lt;div class="card-body"&gt;
-                    &lt;div class="table-container"&gt;
-                        &lt;table id="stocks-table"&gt;
-                            &lt;thead&gt;
-                                &lt;tr&gt;
-                                    &lt;th&gt;股票名称&lt;/th&gt;
-                                    &lt;th&gt;当前价格&lt;/th&gt;
-                                    &lt;th&gt;涨跌幅&lt;/th&gt;
-                                    &lt;th&gt;芒格评分&lt;/th&gt;
-                                    &lt;th&gt;建议&lt;/th&gt;
-                                &lt;/tr&gt;
-                            &lt;/thead&gt;
-                            &lt;tbody id="stocks-tbody"&gt;
-                                &lt;tr&gt;
-                                    &lt;td colspan="5" style="text-align:center;color:#6b7280;"&gt;加载中...&lt;/td&gt;
-                                &lt;/tr&gt;
-                            &lt;/tbody&gt;
-                        &lt;/table&gt;
-                    &lt;/div&gt;
-                &lt;/div&gt;
+            &lt;div class="section-body"&gt;
+                &lt;table class="data-table"&gt;
+                    &lt;thead&gt;
+                        &lt;tr&gt;
+                            &lt;th&gt;股票&lt;/th&gt;
+                            &lt;th&gt;当前价格&lt;/th&gt;
+                            &lt;th&gt;涨跌幅&lt;/th&gt;
+                            &lt;th&gt;芒格评分&lt;/th&gt;
+                            &lt;th&gt;建议&lt;/th&gt;
+                        &lt;/tr&gt;
+                    &lt;/thead&gt;
+                    &lt;tbody id="stocks-tbody"&gt;
+                        &lt;tr&gt;
+                            &lt;td colspan="5" style="text-align:center;color:var(--text-tertiary);padding:32px;"&gt;加载中...&lt;/td&gt;
+                        &lt;/tr&gt;
+                    &lt;/tbody&gt;
+                &lt;/table&gt;
             &lt;/div&gt;
-
-            &lt;!-- 决策检查清单 --&gt;
-            &lt;div class="card"&gt;
-                &lt;div class="card-header"&gt;
-                    &lt;div class="card-title"&gt;✅ 决策检查清单&lt;/div&gt;
-                &lt;/div&gt;
-                &lt;div class="card-body" id="checklist-container"&gt;
-                    &lt;p style="color:#6b7280;"&gt;加载中...&lt;/p&gt;
-                &lt;/div&gt;
-            &lt;/div&gt;
-
-            &lt;!-- 心理偏差自检 --&gt;
-            &lt;div class="card"&gt;
-                &lt;div class="card-header"&gt;
-                    &lt;div class="card-title"&gt;⚠️ 心理偏差自检&lt;/div&gt;
-                &lt;/div&gt;
-                &lt;div class="card-body" id="biases-container"&gt;
-                    &lt;p style="color:#6b7280;"&gt;加载中...&lt;/p&gt;
-                &lt;/div&gt;
-            &lt;/div&gt;
-
-            &lt;!-- 芒格投资原则 --&gt;
-            &lt;div class="card"&gt;
-                &lt;div class="card-header"&gt;
-                    &lt;div class="card-title"&gt;📚 芒格投资原则&lt;/div&gt;
-                &lt;/div&gt;
-                &lt;div class="card-body"&gt;
-                    &lt;div class="principles-grid"&gt;
-                        &lt;div class="principle-item"&gt;
-                            &lt;div class="principle-icon"&gt;🎯&lt;/div&gt;
-                            &lt;div class="principle-title"&gt;能力圈原则&lt;/div&gt;
-                            &lt;div class="principle-desc"&gt;只在自己理解的领域内投资&lt;/div&gt;
-                        &lt;/div&gt;
-                        &lt;div class="principle-item"&gt;
-                            &lt;div class="principle-icon"&gt;💎&lt;/div&gt;
-                            &lt;div class="principle-title"&gt;安全边际&lt;/div&gt;
-                            &lt;div class="principle-desc"&gt;以显著折扣价买入优质公司&lt;/div&gt;
-                        &lt;/div&gt;
-                        &lt;div class="principle-item"&gt;
-                            &lt;div class="principle-icon"&gt;⏳&lt;/div&gt;
-                            &lt;div class="principle-title"&gt;长期持有&lt;/div&gt;
-                            &lt;div class="principle-desc"&gt;优秀公司值得长期拥有&lt;/div&gt;
-                        &lt;/div&gt;
-                        &lt;div class="principle-item"&gt;
-                            &lt;div class="principle-icon"&gt;🔄&lt;/div&gt;
-                            &lt;div class="principle-title"&gt;逆向思维&lt;/div&gt;
-                            &lt;div class="principle-desc"&gt;在别人恐惧时贪婪&lt;/div&gt;
-                        &lt;/div&gt;
-                        &lt;div class="principle-item"&gt;
-                            &lt;div class="principle-icon"&gt;📊&lt;/div&gt;
-                            &lt;div class="principle-title"&gt;逆向思维&lt;/div&gt;
-                            &lt;div class="principle-desc"&gt;在别人贪婪时恐惧&lt;/div&gt;
-                        &lt;/div&gt;
-                        &lt;div class="principle-item"&gt;
-                            &lt;div class="principle-icon"&gt;🧠&lt;/div&gt;
-                            &lt;div class="principle-title"&gt;理性思考&lt;/div&gt;
-                            &lt;div class="principle-desc"&gt;避免情绪化决策&lt;/div&gt;
-                        &lt;/div&gt;
-                    &lt;/div&gt;
-                &lt;/div&gt;
-            &lt;/div&gt;
-
         &lt;/div&gt;
-    &lt;/div&gt;
+
+        &lt;!-- Checklist --&gt;
+        &lt;div class="section-card"&gt;
+            &lt;div class="section-header"&gt;
+                &lt;div class="section-title"&gt;✅ 决策检查清单&lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div class="section-body"&gt;
+                &lt;div class="checklist-container" id="checklist-container"&gt;
+                    &lt;p style="color:var(--text-tertiary);padding:20px;"&gt;加载中...&lt;/p&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;!-- Biases --&gt;
+        &lt;div class="section-card"&gt;
+            &lt;div class="section-header"&gt;
+                &lt;div class="section-title"&gt;⚠️ 心理偏差自检&lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div class="section-body"&gt;
+                &lt;div class="biases-container" id="biases-container"&gt;
+                    &lt;p style="color:var(--text-tertiary);padding:20px;"&gt;加载中...&lt;/p&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;!-- Principles --&gt;
+        &lt;div class="section-card"&gt;
+            &lt;div class="section-header"&gt;
+                &lt;div class="section-title"&gt;📚 芒格投资原则&lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div class="section-body"&gt;
+                &lt;div class="principles-container"&gt;
+                    &lt;div class="principle-card"&gt;
+                        &lt;div class="principle-icon"&gt;🎯&lt;/div&gt;
+                        &lt;div class="principle-title"&gt;能力圈原则&lt;/div&gt;
+                        &lt;div class="principle-desc"&gt;只在自己真正理解的领域内投资，坚守能力边界&lt;/div&gt;
+                    &lt;/div&gt;
+                    &lt;div class="principle-card"&gt;
+                        &lt;div class="principle-icon"&gt;💎&lt;/div&gt;
+                        &lt;div class="principle-title"&gt;安全边际&lt;/div&gt;
+                        &lt;div class="principle-desc"&gt;以显著折扣价买入优质公司，预留安全缓冲空间&lt;/div&gt;
+                    &lt;/div&gt;
+                    &lt;div class="principle-card"&gt;
+                        &lt;div class="principle-icon"&gt;⏳&lt;/div&gt;
+                        &lt;div class="principle-title"&gt;长期持有&lt;/div&gt;
+                        &lt;div class="principle-desc"&gt;优秀公司值得长期拥有，时间是优质企业的朋友&lt;/div&gt;
+                    &lt;/div&gt;
+                    &lt;div class="principle-card"&gt;
+                        &lt;div class="principle-icon"&gt;🔄&lt;/div&gt;
+                        &lt;div class="principle-title"&gt;逆向思维&lt;/div&gt;
+                        &lt;div class="principle-desc"&gt;在别人贪婪时恐惧，在别人恐惧时贪婪&lt;/div&gt;
+                    &lt;/div&gt;
+                    &lt;div class="principle-card"&gt;
+                        &lt;div class="principle-icon"&gt;📊&lt;/div&gt;
+                        &lt;div class="principle-title"&gt;聚焦质量&lt;/div&gt;
+                        &lt;div class="principle-desc"&gt;关注商业模式简单清晰、现金流稳定的公司&lt;/div&gt;
+                    &lt;/div&gt;
+                    &lt;div class="principle-card"&gt;
+                        &lt;div class="principle-icon"&gt;🧠&lt;/div&gt;
+                        &lt;div class="principle-title"&gt;理性思考&lt;/div&gt;
+                        &lt;div class="principle-desc"&gt;避免情绪化决策，保持客观中立的分析判断&lt;/div&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+    &lt;/main&gt;
 &lt;/div&gt;
 
 &lt;script&gt;
-    // 示例数据
     let stocks = [
-        { code: '600519', name: '贵州茅台', price: 1382.96, change: 0.58, sector: '白酒', score: 8.2, advice: 'wait' },
-        { code: '000858', name: '五粮液', price: 92.91, change: 0.70, sector: '白酒', score: 7.5, advice: 'watch' },
-        { code: '601888', name: '中国中免', price: 62.95, change: -0.13, sector: '免税', score: 7.0, advice: 'watch' },
-        { code: '600029', name: '南方航空', price: 5.62, change: 2.00, sector: '航空', score: 6.5, advice: 'watch' },
-        { code: '600900', name: '长江电力', price: 27.10, change: -0.37, sector: '电力', score: 8.5, advice: 'hold' }
+        { code:'600519', name:'贵州茅台', price:1382.96, change:0.58, sector:'白酒', score:8.2, advice:'wait' },
+        { code:'000858', name:'五粮液', price:92.91, change:0.70, sector:'白酒', score:7.5, advice:'watch' },
+        { code:'601888', name:'中国中免', price:62.95, change:-0.13, sector:'免税', score:7.0, advice:'watch' },
+        { code:'600029', name:'南方航空', price:5.62, change:2.00, sector:'航空', score:6.5, advice:'watch' },
+        { code:'600900', name:'长江电力', price:27.10, change:-0.37, sector:'电力', score:8.5, advice:'hold' }
     ];
 
     let checklistItems = [
-        '商业模式分析完成', '竞争优势分析完成', '管理层评估完成',
-        '估值分析完成', '已冷静思考至少24小时', '已考虑反面证据', '已检查心理偏差'
+        '商业模式分析完成',
+        '竞争优势分析完成',
+        '管理层评估完成',
+        '估值分析完成',
+        '已冷静思考至少24小时',
+        '已考虑反面证据',
+        '已检查心理偏差'
     ];
 
     let biases = [
         '确认偏差 - 只看支持自己观点的信息',
-        '过度自信 - 高估自己的能力',
-        '避免怀疑 - 急于做决定',
-        '羊群效应 - 从众行为',
-        '损失厌恶 - 对损失更敏感',
+        '过度自信 - 高估自己的能力和判断',
+        '避免怀疑 - 急于做决定消除不确定性',
+        '羊群效应 - 从众行为，跟随大众',
+        '损失厌恶 - 对损失的感受远强于收益',
         '过度乐观 - 高估成功概率'
     ];
 
@@ -711,13 +884,13 @@
         const tbody = document.getElementById('stocks-tbody');
         let html = '';
         stocks.forEach(stock =&gt; {
-            let changeClass = stock.change &gt;= 0 ? 'change-up' : 'change-down';
-            let sign = stock.change &gt;= 0 ? '+' : '';
+            const changeClass = stock.change &gt;= 0 ? 'change-up' : 'change-down';
+            const sign = stock.change &gt;= 0 ? '+' : '';
             
             let scoreClass = 'score-average';
             if (stock.score &gt;= 8) scoreClass = 'score-excellent';
-            else if (stock.score &gt;= 7) scoreClass = 'score-good';
-            else if (stock.score &gt;= 6) scoreClass = 'score-average';
+            else if (stock.score &gt;=7) scoreClass = 'score-good';
+            else if (stock.score &gt;=6) scoreClass = 'score-average';
             else scoreClass = 'score-poor';
 
             let adviceClass = stock.advice === 'hold' ? 'advice-hold' : 
@@ -728,11 +901,13 @@
             html += `
                 &lt;tr&gt;
                     &lt;td&gt;
-                        &lt;div class="stock-name"&gt;${stock.name}&lt;/div&gt;
-                        &lt;div class="stock-code"&gt;${stock.code} · ${stock.sector}&lt;/div&gt;
+                        &lt;div class="stock-info"&gt;
+                            &lt;div class="stock-name"&gt;${stock.name}&lt;/div&gt;
+                            &lt;div class="stock-meta"&gt;${stock.code} · ${stock.sector}&lt;/div&gt;
+                        &lt;/div&gt;
                     &lt;/td&gt;
                     &lt;td&gt;
-                        &lt;span class="price"&gt;¥${stock.price.toFixed(2)}&lt;/span&gt;
+                        &lt;div class="price"&gt;¥${stock.price.toFixed(2)}&lt;/div&gt;
                     &lt;/td&gt;
                     &lt;td&gt;
                         &lt;span class="${changeClass}"&gt;${sign}${stock.change.toFixed(2)}%&lt;/span&gt;
@@ -746,7 +921,6 @@
                 &lt;/tr&gt;
             `;
         });
-
         tbody.innerHTML = html;
         updateStats();
     }
@@ -758,9 +932,9 @@
         checklistItems.forEach((item, index) =&gt; {
             const checked = checkedItems.has(index);
             html += `
-                &lt;div class="checklist-item" onclick="toggleChecklistItem(${index})"&gt;
+                &lt;div class="checklist-item ${checked ? 'completed' : ''}" onclick="toggleChecklistItem(${index})"&gt;
                     &lt;div class="checklist-checkbox ${checked ? 'checked' : ''}"&gt;&lt;/div&gt;
-                    &lt;span&gt;${item}&lt;/span&gt;
+                    &lt;span class="checklist-text"&gt;${item}&lt;/span&gt;
                 &lt;/div&gt;
             `;
         });
@@ -768,7 +942,7 @@
         updateChecklistProgress();
     }
 
-    // 切换检查状态
+    // 切换检查项
     function toggleChecklistItem(index) {
         if (checkedItems.has(index)) checkedItems.delete(index);
         else checkedItems.add(index);
@@ -785,7 +959,12 @@
         const container = document.getElementById('biases-container');
         let html = '';
         biases.forEach(bias =&gt; {
-            html += `&lt;div class="bias-item"&gt;${bias}&lt;/div&gt;`;
+            html += `
+                &lt;div class="bias-item"&gt;
+                    &lt;span class="bias-icon"&gt;⚠️&lt;/span&gt;
+                    &lt;span class="bias-text"&gt;${bias}&lt;/span&gt;
+                &lt;/div&gt;
+            `;
         });
         container.innerHTML = html;
     }
@@ -797,23 +976,21 @@
         document.getElementById('market-mood').textContent = '中性';
     }
 
-    // 添加股票
-    document.getElementById('add-stock-btn').addEventListener('click', function() {
+    // 添加股票按钮
+    document.getElementById('add-btn').addEventListener('click', function() {
         const keyword = document.getElementById('stock-keyword').value.trim();
-        const sector = document.getElementById('stock-sector').value.trim();
-        
         if (keyword) {
             alert('添加股票功能需要后端支持');
         }
     });
 
-    // 刷新数据
+    // 刷新按钮
     document.getElementById('refresh-btn').addEventListener('click', function() {
         alert('刷新数据');
         renderTable();
     });
 
-    // 初始化页面
+    // 初始化
     renderTable();
     renderChecklist();
     renderBiases();

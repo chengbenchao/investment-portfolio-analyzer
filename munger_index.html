@@ -1,12 +1,12 @@
 
-&lt;!DOCTYPE html&gt;
-&lt;html lang="zh-CN"&gt;
-&lt;head&gt;
-    &lt;meta charset="UTF-8"&gt;
-    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
-    &lt;title&gt;📊 芒格智慧 - A股投资分析系统&lt;/title&gt;
-    &lt;link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Noto+Sans+SC:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"&gt;
-    &lt;style&gt;
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📊 芒格智慧 - A股投资分析系统</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
         :root{
             --bg-primary:#0d1117;
             --bg-secondary:#161b22;
@@ -591,6 +591,96 @@
             box-shadow:0 0 0 3px rgba(88,166,255,0.15);
         }
 
+        /* Modal/Dropdown */
+        .modal-overlay{
+            display:none;
+            position:fixed;
+            inset:0;
+            background:rgba(0,0,0,0.7);
+            z-index:999;
+            justify-content:center;
+            align-items:flex-start;
+            padding:20px 10px;
+            overflow-y:auto;
+        }
+        .modal-overlay.active{
+            display:flex;
+        }
+        .modal-content{
+            background:var(--bg-secondary);
+            border:1px solid var(--border-color);
+            border-radius:12px;
+            max-width:800px;
+            width:100%;
+            max-height:90vh;
+            overflow-y:auto;
+        }
+        .modal-header{
+            padding:16px 20px;
+            border-bottom:1px solid var(--border-color);
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+        }
+        .modal-close{
+            background:none;
+            border:none;
+            color:var(--text-secondary);
+            font-size:24px;
+            cursor:pointer;
+            padding:4px;
+            line-height:1;
+        }
+        .modal-close:hover{
+            color:var(--text-primary);
+        }
+        .modal-body{
+            padding:20px;
+        }
+        .detail-section{
+            margin-bottom:20px;
+        }
+        .detail-title{
+            font-size:14px;
+            font-weight:600;
+            color:var(--text-primary);
+            margin-bottom:10px;
+        }
+        .detail-item{
+            display:flex;
+            justify-content:space-between;
+            padding:8px 0;
+            border-bottom:1px solid var(--border-color);
+            color:var(--text-secondary);
+        }
+        .detail-label{
+            font-weight:500;
+        }
+        .detail-good{
+            color:var(--accent-green-light);
+        }
+        .detail-bad{
+            color:var(--accent-red);
+        }
+
+        /* Mobile Menu Toggle */
+        .menu-toggle{
+            display:none;
+            background:none;
+            border:none;
+            color:var(--text-primary);
+            font-size:24px;
+            cursor:pointer;
+            padding:8px;
+        }
+        .sidebar-overlay{
+            display:none;
+            position:fixed;
+            inset:0;
+            background:rgba(0,0,0,0.6);
+            z-index:998;
+        }
+
         /* Responsive */
         @media(max-width:1200px){
             .dashboard-grid{
@@ -612,243 +702,426 @@
         }
 
         @media(max-width:640px){
-            .dashboard-grid{
-                grid-template-columns:1fr;
-            }
-            .principles-container{
-                grid-template-columns:1fr;
+            /* Header */
+            .app-header{
+                padding:0;
             }
             .header-inner{
-                padding:0 16px;
+                padding:0 12px;
+                height:56px;
+            }
+            .header-left{
+                gap:8px;
+            }
+            .logo{
+                font-size:16px;
+                gap:6px;
+            }
+            .logo-icon{
+                font-size:20px;
+            }
+            .nav{
+                display:none;
+            }
+            .menu-toggle{
+                display:block;
+            }
+            .status-indicator span{
+                display:none;
+            }
+            .status-dot{
+                width:6px;
+                height:6px;
+            }
+
+            /* Main Layout */
+            .app-container{
+                padding:12px;
+                gap:16px;
+            }
+
+            /* Sidebar - Mobile Drawer */
+            .sidebar{
+                position:fixed;
+                top:0;
+                left:0;
+                width:280px;
+                height:100vh;
+                z-index:999;
+                border-radius:0;
+                transform:translateX(-100%);
+                transition:transform 0.3s ease;
+                overflow-y:auto;
+            }
+            .sidebar.active{
+                transform:translateX(0);
+            }
+            .sidebar-overlay.active{
+                display:block;
+            }
+
+            /* Dashboard Grid */
+            .dashboard-grid{
+                grid-template-columns:1fr;
+                gap:12px;
+            }
+            .metric-card{
+                padding:16px;
+            }
+            .metric-value{
+                font-size:22px;
+            }
+            .metric-label{
+                font-size:11px;
+            }
+            .metric-desc{
+                font-size:12px;
+            }
+
+            /* Section Cards */
+            .section-card{
+                border-radius:10px;
+                margin-bottom:12px;
+            }
+            .section-header{
+                padding:12px 14px;
+                flex-direction:column;
+                align-items:flex-start;
+                gap:10px;
+            }
+            .section-title{
+                font-size:14px;
+            }
+            .section-actions{
+                width:100%;
+            }
+            .btn{
+                width:100%;
+                padding:10px;
+                font-size:14px;
+            }
+
+            /* Add Stock Form */
+            .add-stock-container{
+                padding:12px 14px;
+            }
+            .add-stock-form{
+                flex-direction:column;
+                gap:10px;
+            }
+            .form-group{
+                max-width:100% !important;
+                width:100%;
+            }
+            .form-group label{
+                font-size:11px;
+            }
+            .form-group input{
+                padding:10px;
+                font-size:16px; /* Prevent iOS zoom */
+            }
+
+            /* Table - Horizontal Scroll */
+            .section-body{
+                overflow-x:auto;
+                -webkit-overflow-scrolling:touch;
+            }
+            .data-table{
+                min-width:600px;
+            }
+            .data-table thead th{
+                padding:10px 12px;
+                font-size:11px;
+                white-space:nowrap;
+                position:sticky;
+                top:0;
+                background:var(--bg-primary);
+            }
+            .data-table tbody td{
+                padding:12px;
+                font-size:13px;
+            }
+            .stock-name{
+                font-size:13px;
+            }
+            .stock-meta{
+                font-size:11px;
+            }
+            .price{
+                font-size:14px;
+            }
+            .score-badge,
+            .advice-badge{
+                font-size:12px;
+                padding:3px 8px;
+            }
+
+            /* Checklist */
+            .checklist-container{
+                padding:12px 14px;
+            }
+            .checklist-item{
+                padding:12px;
+            }
+            .checklist-text{
+                font-size:13px;
+            }
+
+            /* Biases */
+            .biases-container{
+                padding:12px 14px;
+            }
+            .bias-item{
+                padding:12px;
+                font-size:13px;
+            }
+
+            /* Principles */
+            .principles-container{
+                padding:14px;
+                grid-template-columns:1fr;
+                gap:12px;
+            }
+            .principle-card{
+                padding:16px;
+            }
+            .principle-title{
+                font-size:14px;
+            }
+            .principle-desc{
+                font-size:12px;
+            }
+
+            /* Body font size */
+            body{
+                font-size:13px;
             }
         }
-    &lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
+    </style>
+</head>
+<body>
 
-&lt;!-- Header --&gt;
-&lt;header class="app-header"&gt;
-    &lt;div class="header-inner"&gt;
-        &lt;div class="header-left"&gt;
-            &lt;div class="logo"&gt;
-                &lt;span class="logo-icon"&gt;📊&lt;/span&gt;
-                &lt;span&gt;芒格智慧&lt;/span&gt;
-            &lt;/div&gt;
-            &lt;nav class="nav"&gt;
-                &lt;div class="nav-item active"&gt;概览&lt;/div&gt;
-                &lt;div class="nav-item"&gt;组合&lt;/div&gt;
-                &lt;div class="nav-item"&gt;分析&lt;/div&gt;
-            &lt;/nav&gt;
-        &lt;/div&gt;
-        &lt;div class="header-right"&gt;
-            &lt;div class="status-indicator"&gt;
-                &lt;div class="status-dot"&gt;&lt;/div&gt;
-                &lt;span id="time-display"&gt;运行中&lt;/span&gt;
-            &lt;/div&gt;
-        &lt;/div&gt;
-    &lt;/div&gt;
-&lt;/header&gt;
+<!-- Header -->
+<header class="app-header">
+    <div class="header-inner">
+        <div class="header-left">
+            <button class="menu-toggle" id="menu-toggle">☰</button>
+            <div class="logo">
+                <span class="logo-icon">📊</span>
+                <span>芒格智慧</span>
+            </div>
+            <nav class="nav">
+                <div class="nav-item active">概览</div>
+                <div class="nav-item">组合</div>
+                <div class="nav-item">分析</div>
+            </nav>
+        </div>
+        <div class="header-right">
+            <div class="status-indicator">
+                <div class="status-dot"></div>
+                <span id="time-display">运行中</span>
+            </div>
+        </div>
+    </div>
+</header>
 
-&lt;!-- Main Content --&gt;
-&lt;div class="app-container"&gt;
-    &lt;!-- Sidebar --&gt;
-    &lt;aside class="sidebar"&gt;
-        &lt;div class="sidebar-section"&gt;
-            &lt;div class="sidebar-title"&gt;主要功能&lt;/div&gt;
-            &lt;div class="sidebar-menu"&gt;
-                &lt;div class="sidebar-item active"&gt;
-                    &lt;span class="sidebar-icon"&gt;📈&lt;/span&gt;
-                    &lt;span&gt;投资组合&lt;/span&gt;
-                &lt;/div&gt;
-                &lt;div class="sidebar-item"&gt;
-                    &lt;span class="sidebar-icon"&gt;🧠&lt;/span&gt;
-                    &lt;span&gt;芒格分析&lt;/span&gt;
-                &lt;/div&gt;
-                &lt;div class="sidebar-item"&gt;
-                    &lt;span class="sidebar-icon"&gt;✅&lt;/span&gt;
-                    &lt;span&gt;决策检查&lt;/span&gt;
-                &lt;/div&gt;
-                &lt;div class="sidebar-item"&gt;
-                    &lt;span class="sidebar-icon"&gt;⚠️&lt;/span&gt;
-                    &lt;span&gt;心理偏差&lt;/span&gt;
-                &lt;/div&gt;
-                &lt;div class="sidebar-item"&gt;
-                    &lt;span class="sidebar-icon"&gt;📚&lt;/span&gt;
-                    &lt;span&gt;投资原则&lt;/span&gt;
-                &lt;/div&gt;
-            &lt;/div&gt;
-        &lt;/div&gt;
+<!-- Sidebar Overlay (Mobile) -->
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
 
-        &lt;div class="sidebar-section"&gt;
-            &lt;div class="sidebar-title"&gt;系统状态&lt;/div&gt;
-            &lt;div style="padding:8px 0;color:var(--text-tertiary);font-size:13px;"&gt;
+<!-- Main Content -->
+<div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-title">主要功能</div>
+            <div class="sidebar-menu">
+                <div class="sidebar-item active">
+                    <span class="sidebar-icon">📈</span>
+                    <span>投资组合</span>
+                </div>
+                <div class="sidebar-item">
+                    <span class="sidebar-icon">🧠</span>
+                    <span>芒格分析</span>
+                </div>
+                <div class="sidebar-item">
+                    <span class="sidebar-icon">✅</span>
+                    <span>决策检查</span>
+                </div>
+                <div class="sidebar-item">
+                    <span class="sidebar-icon">⚠️</span>
+                    <span>心理偏差</span>
+                </div>
+                <div class="sidebar-item">
+                    <span class="sidebar-icon">📚</span>
+                    <span>投资原则</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar-section">
+            <div class="sidebar-title">系统状态</div>
+            <div style="padding:8px 0;color:var(--text-tertiary);font-size:13px;">
                 上次更新：刚刚
-            &lt;/div&gt;
-        &lt;/div&gt;
-    &lt;/aside&gt;
+            </div>
+        </div>
+    </aside>
 
-    &lt;!-- Main Area --&gt;
-    &lt;main class="main-content"&gt;
-        &lt;!-- Dashboard Metrics --&gt;
-        &lt;div class="dashboard-grid"&gt;
-            &lt;div class="metric-card"&gt;
-                &lt;div class="metric-header"&gt;
-                    &lt;div class="metric-label"&gt;冷静期状态&lt;/div&gt;
-                    &lt;span style="color:var(--accent-green-light);"&gt;✅&lt;/span&gt;
-                &lt;/div&gt;
-                &lt;div class="metric-value"&gt;已就绪&lt;/div&gt;
-                &lt;div class="metric-desc"&gt;距离上次决策已超过24小时&lt;/div&gt;
-            &lt;/div&gt;
+    <!-- Main Area -->
+    <main class="main-content">
+        <!-- Dashboard Metrics -->
+        <div class="dashboard-grid">
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-label">冷静期状态</div>
+                    <span style="color:var(--accent-green-light);">✅</span>
+                </div>
+                <div class="metric-value">已就绪</div>
+                <div class="metric-desc">距离上次决策已超过24小时</div>
+            </div>
 
-            &lt;div class="metric-card"&gt;
-                &lt;div class="metric-header"&gt;
-                    &lt;div class="metric-label"&gt;检查清单&lt;/div&gt;
-                &lt;/div&gt;
-                &lt;div class="metric-value" id="checklist-progress"&gt;0/7&lt;/div&gt;
-                &lt;div class="metric-desc"&gt;已完成的决策检查项&lt;/div&gt;
-            &lt;/div&gt;
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-label">检查清单</div>
+                </div>
+                <div class="metric-value" id="checklist-progress">0/7</div>
+                <div class="metric-desc">已完成的决策检查项</div>
+            </div>
 
-            &lt;div class="metric-card"&gt;
-                &lt;div class="metric-header"&gt;
-                    &lt;div class="metric-label"&gt;市场情绪&lt;/div&gt;
-                &lt;/div&gt;
-                &lt;div class="metric-value" id="market-mood"&gt;中性&lt;/div&gt;
-                &lt;div class="metric-desc"&gt;当前整体市场状态&lt;/div&gt;
-            &lt;/div&gt;
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-label">市场情绪</div>
+                </div>
+                <div class="metric-value" id="market-mood">中性</div>
+                <div class="metric-desc">当前整体市场状态</div>
+            </div>
 
-            &lt;div class="metric-card"&gt;
-                &lt;div class="metric-header"&gt;
-                    &lt;div class="metric-label"&gt;组合评分&lt;/div&gt;
-                &lt;/div&gt;
-                &lt;div class="metric-value" id="avg-score"&gt;--/10&lt;/div&gt;
-                &lt;div class="metric-desc"&gt;整体投资组合质量评分&lt;/div&gt;
-            &lt;/div&gt;
-        &lt;/div&gt;
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-label">组合评分</div>
+                </div>
+                <div class="metric-value" id="avg-score">--/10</div>
+                <div class="metric-desc">整体投资组合质量评分</div>
+            </div>
+        </div>
 
-        &lt;!-- Add Stock --&gt;
-        &lt;div class="section-card"&gt;
-            &lt;div class="section-header"&gt;
-                &lt;div class="section-title"&gt;📈 添加新股票&lt;/div&gt;
-            &lt;/div&gt;
-            &lt;div class="add-stock-container"&gt;
-                &lt;div class="add-stock-form"&gt;
-                    &lt;div class="form-group"&gt;
-                        &lt;label&gt;股票名称/代码&lt;/label&gt;
-                        &lt;input type="text" id="stock-keyword" placeholder="例如：贵州茅台 或 600519"&gt;
-                    &lt;/div&gt;
-                    &lt;div class="form-group" style="max-width:220px;"&gt;
-                        &lt;label&gt;所属行业&lt;/label&gt;
-                        &lt;input type="text" id="stock-sector" value="其他"&gt;
-                    &lt;/div&gt;
-                    &lt;button class="btn btn-primary" id="add-btn"&gt;添加&lt;/button&gt;
-                &lt;/div&gt;
-            &lt;/div&gt;
-        &lt;/div&gt;
+        <!-- Add Stock -->
+        <div class="section-card">
+            <div class="section-header">
+                <div class="section-title">📈 添加新股票</div>
+            </div>
+            <div class="add-stock-container">
+                <div class="add-stock-form">
+                    <div class="form-group">
+                        <label>股票名称/代码</label>
+                        <input type="text" id="stock-keyword" placeholder="例如：贵州茅台 或 600519">
+                    </div>
+                    <div class="form-group" style="max-width:220px;">
+                        <label>所属行业</label>
+                        <input type="text" id="stock-sector" value="其他">
+                    </div>
+                    <button class="btn btn-primary" id="add-btn">添加</button>
+                </div>
+            </div>
+        </div>
 
-        &lt;!-- Portfolio Table --&gt;
-        &lt;div class="section-card"&gt;
-            &lt;div class="section-header"&gt;
-                &lt;div class="section-title"&gt;📊 投资组合&lt;/div&gt;
-                &lt;div class="section-actions"&gt;
-                    &lt;button class="btn btn-secondary" id="refresh-btn"&gt;刷新数据&lt;/button&gt;
-                &lt;/div&gt;
-            &lt;/div&gt;
-            &lt;div class="section-body"&gt;
-                &lt;table class="data-table"&gt;
-                    &lt;thead&gt;
-                        &lt;tr&gt;
-                            &lt;th&gt;股票&lt;/th&gt;
-                            &lt;th&gt;当前价格&lt;/th&gt;
-                            &lt;th&gt;涨跌幅&lt;/th&gt;
-                            &lt;th&gt;芒格评分&lt;/th&gt;
-                            &lt;th&gt;建议&lt;/th&gt;
-                        &lt;/tr&gt;
-                    &lt;/thead&gt;
-                    &lt;tbody id="stocks-tbody"&gt;
-                        &lt;tr&gt;
-                            &lt;td colspan="5" style="text-align:center;color:var(--text-tertiary);padding:32px;"&gt;加载中...&lt;/td&gt;
-                        &lt;/tr&gt;
-                    &lt;/tbody&gt;
-                &lt;/table&gt;
-            &lt;/div&gt;
-        &lt;/div&gt;
+        <!-- Portfolio Table -->
+        <div class="section-card">
+            <div class="section-header">
+                <div class="section-title">📊 投资组合</div>
+                <div class="section-actions">
+                    <button class="btn btn-secondary" id="refresh-btn">刷新数据</button>
+                </div>
+            </div>
+            <div class="section-body">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>股票</th>
+                            <th>当前价格</th>
+                            <th>涨跌幅</th>
+                            <th>芒格评分</th>
+                            <th>建议</th>
+                        </tr>
+                    </thead>
+                    <tbody id="stocks-tbody">
+                        <tr>
+                            <td colspan="5" style="text-align:center;color:var(--text-tertiary);padding:32px;">加载中...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
-        &lt;!-- Checklist --&gt;
-        &lt;div class="section-card"&gt;
-            &lt;div class="section-header"&gt;
-                &lt;div class="section-title"&gt;✅ 决策检查清单&lt;/div&gt;
-            &lt;/div&gt;
-            &lt;div class="section-body"&gt;
-                &lt;div class="checklist-container" id="checklist-container"&gt;
-                    &lt;p style="color:var(--text-tertiary);padding:20px;"&gt;加载中...&lt;/p&gt;
-                &lt;/div&gt;
-            &lt;/div&gt;
-        &lt;/div&gt;
+        <!-- Checklist -->
+        <div class="section-card">
+            <div class="section-header">
+                <div class="section-title">✅ 决策检查清单</div>
+            </div>
+            <div class="section-body">
+                <div class="checklist-container" id="checklist-container">
+                    <p style="color:var(--text-tertiary);padding:20px;">加载中...</p>
+                </div>
+            </div>
+        </div>
 
-        &lt;!-- Biases --&gt;
-        &lt;div class="section-card"&gt;
-            &lt;div class="section-header"&gt;
-                &lt;div class="section-title"&gt;⚠️ 心理偏差自检&lt;/div&gt;
-            &lt;/div&gt;
-            &lt;div class="section-body"&gt;
-                &lt;div class="biases-container" id="biases-container"&gt;
-                    &lt;p style="color:var(--text-tertiary);padding:20px;"&gt;加载中...&lt;/p&gt;
-                &lt;/div&gt;
-            &lt;/div&gt;
-        &lt;/div&gt;
+        <!-- Biases -->
+        <div class="section-card">
+            <div class="section-header">
+                <div class="section-title">⚠️ 心理偏差自检</div>
+            </div>
+            <div class="section-body">
+                <div class="biases-container" id="biases-container">
+                    <p style="color:var(--text-tertiary);padding:20px;">加载中...</p>
+                </div>
+            </div>
+        </div>
 
-        &lt;!-- Principles --&gt;
-        &lt;div class="section-card"&gt;
-            &lt;div class="section-header"&gt;
-                &lt;div class="section-title"&gt;📚 芒格投资原则&lt;/div&gt;
-            &lt;/div&gt;
-            &lt;div class="section-body"&gt;
-                &lt;div class="principles-container"&gt;
-                    &lt;div class="principle-card"&gt;
-                        &lt;div class="principle-icon"&gt;🎯&lt;/div&gt;
-                        &lt;div class="principle-title"&gt;能力圈原则&lt;/div&gt;
-                        &lt;div class="principle-desc"&gt;只在自己真正理解的领域内投资，坚守能力边界&lt;/div&gt;
-                    &lt;/div&gt;
-                    &lt;div class="principle-card"&gt;
-                        &lt;div class="principle-icon"&gt;💎&lt;/div&gt;
-                        &lt;div class="principle-title"&gt;安全边际&lt;/div&gt;
-                        &lt;div class="principle-desc"&gt;以显著折扣价买入优质公司，预留安全缓冲空间&lt;/div&gt;
-                    &lt;/div&gt;
-                    &lt;div class="principle-card"&gt;
-                        &lt;div class="principle-icon"&gt;⏳&lt;/div&gt;
-                        &lt;div class="principle-title"&gt;长期持有&lt;/div&gt;
-                        &lt;div class="principle-desc"&gt;优秀公司值得长期拥有，时间是优质企业的朋友&lt;/div&gt;
-                    &lt;/div&gt;
-                    &lt;div class="principle-card"&gt;
-                        &lt;div class="principle-icon"&gt;🔄&lt;/div&gt;
-                        &lt;div class="principle-title"&gt;逆向思维&lt;/div&gt;
-                        &lt;div class="principle-desc"&gt;在别人贪婪时恐惧，在别人恐惧时贪婪&lt;/div&gt;
-                    &lt;/div&gt;
-                    &lt;div class="principle-card"&gt;
-                        &lt;div class="principle-icon"&gt;📊&lt;/div&gt;
-                        &lt;div class="principle-title"&gt;聚焦质量&lt;/div&gt;
-                        &lt;div class="principle-desc"&gt;关注商业模式简单清晰、现金流稳定的公司&lt;/div&gt;
-                    &lt;/div&gt;
-                    &lt;div class="principle-card"&gt;
-                        &lt;div class="principle-icon"&gt;🧠&lt;/div&gt;
-                        &lt;div class="principle-title"&gt;理性思考&lt;/div&gt;
-                        &lt;div class="principle-desc"&gt;避免情绪化决策，保持客观中立的分析判断&lt;/div&gt;
-                    &lt;/div&gt;
-                &lt;/div&gt;
-            &lt;/div&gt;
-        &lt;/div&gt;
+        <!-- Principles -->
+        <div class="section-card">
+            <div class="section-header">
+                <div class="section-title">📚 芒格投资原则</div>
+            </div>
+            <div class="section-body">
+                <div class="principles-container">
+                    <div class="principle-card">
+                        <div class="principle-icon">🎯</div>
+                        <div class="principle-title">能力圈原则</div>
+                        <div class="principle-desc">只在自己真正理解的领域内投资，坚守能力边界</div>
+                    </div>
+                    <div class="principle-card">
+                        <div class="principle-icon">💎</div>
+                        <div class="principle-title">安全边际</div>
+                        <div class="principle-desc">以显著折扣价买入优质公司，预留安全缓冲空间</div>
+                    </div>
+                    <div class="principle-card">
+                        <div class="principle-icon">⏳</div>
+                        <div class="principle-title">长期持有</div>
+                        <div class="principle-desc">优秀公司值得长期拥有，时间是优质企业的朋友</div>
+                    </div>
+                    <div class="principle-card">
+                        <div class="principle-icon">🔄</div>
+                        <div class="principle-title">逆向思维</div>
+                        <div class="principle-desc">在别人贪婪时恐惧，在别人恐惧时贪婪</div>
+                    </div>
+                    <div class="principle-card">
+                        <div class="principle-icon">📊</div>
+                        <div class="principle-title">聚焦质量</div>
+                        <div class="principle-desc">关注商业模式简单清晰、现金流稳定的公司</div>
+                    </div>
+                    <div class="principle-card">
+                        <div class="principle-icon">🧠</div>
+                        <div class="principle-title">理性思考</div>
+                        <div class="principle-desc">避免情绪化决策，保持客观中立的分析判断</div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    &lt;/main&gt;
-&lt;/div&gt;
+    </main>
+</div>
 
-&lt;script&gt;
-    let stocks = [
-        { code:'600519', name:'贵州茅台', price:1382.96, change:0.58, sector:'白酒', score:8.2, advice:'wait' },
-        { code:'000858', name:'五粮液', price:92.91, change:0.70, sector:'白酒', score:7.5, advice:'watch' },
-        { code:'601888', name:'中国中免', price:62.95, change:-0.13, sector:'免税', score:7.0, advice:'watch' },
-        { code:'600029', name:'南方航空', price:5.62, change:2.00, sector:'航空', score:6.5, advice:'watch' },
-        { code:'600900', name:'长江电力', price:27.10, change:-0.37, sector:'电力', score:8.5, advice:'hold' }
-    ];
+<script>
+    let stocks = [];
 
     let checklistItems = [
         '商业模式分析完成',
@@ -871,6 +1144,22 @@
 
     let checkedItems = new Set();
 
+    // Mobile Menu Toggle
+    const menuToggle = document.getElementById('menu-toggle');
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+
+    if (menuToggle) {
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        });
+        overlay.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+        });
+    }
+
     // 更新时间
     function updateTime() {
         const now = new Date();
@@ -879,63 +1168,224 @@
     setInterval(updateTime, 1000);
     updateTime();
 
+    // 从API获取股票数据
+    async function fetchStocks() {
+        try {
+            const response = await fetch('/api/get_stocks');
+            const data = await response.json();
+            if (data.success) {
+                stocks = data.stocks;
+                renderTable();
+            }
+        } catch (error) {
+            console.error('获取数据失败:', error);
+        }
+    }
+
+    // 计算简单评分函数
+    function calculateScore(stock) {
+        let score = 6.0;
+        if (stock.pe && stock.pe < 15) score += 1;
+        if (stock.pe && stock.pe < 20) score += 0.5;
+        if (stock.dividendYield > 3) score += 1;
+        if (stock.dividendYield > 4) score += 0.5;
+        if (stock.roe > 0.15) score += 1;
+        return Math.min(10, score);
+    }
+
     // 渲染表格
     function renderTable() {
         const tbody = document.getElementById('stocks-tbody');
+        if (!stocks || stocks.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-tertiary);padding:32px;">暂无数据</td></tr>';
+            updateStats();
+            return;
+        }
+
         let html = '';
-        stocks.forEach(stock =&gt; {
-            const changeClass = stock.change &gt;= 0 ? 'change-up' : 'change-down';
-            const sign = stock.change &gt;= 0 ? '+' : '';
+        stocks.forEach((stock, index) => {
+            const changeClass = stock.change >= 0 ? 'change-up' : 'change-down';
+            const sign = stock.change >= 0 ? '+' : '';
             
+            // 计算简单评分并存储到stock对象
+            let score = calculateScore(stock);
+            stock.score = score;
+
+            let advice = 'wait';
+            if (score >= 8) advice = 'hold';
+            else if (score >= 7) advice = 'wait';
+            else advice = 'watch';
+
             let scoreClass = 'score-average';
-            if (stock.score &gt;= 8) scoreClass = 'score-excellent';
-            else if (stock.score &gt;=7) scoreClass = 'score-good';
-            else if (stock.score &gt;=6) scoreClass = 'score-average';
+            if (score >= 8) scoreClass = 'score-excellent';
+            else if (score >=7) scoreClass = 'score-good';
+            else if (score >=6) scoreClass = 'score-average';
             else scoreClass = 'score-poor';
 
-            let adviceClass = stock.advice === 'hold' ? 'advice-hold' : 
-                              stock.advice === 'wait' ? 'advice-wait' : 'advice-watch';
-            let adviceText = stock.advice === 'hold' ? '持有' : 
-                             stock.advice === 'wait' ? '等待' : '观望';
+            let adviceClass = advice === 'hold' ? 'advice-hold' : 
+                              advice === 'wait' ? 'advice-wait' : 'advice-watch';
+            let adviceText = advice === 'hold' ? '持有' : 
+                             advice === 'wait' ? '等待' : '观望';
 
             html += `
-                &lt;tr&gt;
-                    &lt;td&gt;
-                        &lt;div class="stock-info"&gt;
-                            &lt;div class="stock-name"&gt;${stock.name}&lt;/div&gt;
-                            &lt;div class="stock-meta"&gt;${stock.code} · ${stock.sector}&lt;/div&gt;
-                        &lt;/div&gt;
-                    &lt;/td&gt;
-                    &lt;td&gt;
-                        &lt;div class="price"&gt;¥${stock.price.toFixed(2)}&lt;/div&gt;
-                    &lt;/td&gt;
-                    &lt;td&gt;
-                        &lt;span class="${changeClass}"&gt;${sign}${stock.change.toFixed(2)}%&lt;/span&gt;
-                    &lt;/td&gt;
-                    &lt;td&gt;
-                        &lt;span class="score-badge ${scoreClass}"&gt;${stock.score.toFixed(1)}/10&lt;/span&gt;
-                    &lt;/td&gt;
-                    &lt;td&gt;
-                        &lt;span class="advice-badge ${adviceClass}"&gt;${adviceText}&lt;/span&gt;
-                    &lt;/td&gt;
-                &lt;/tr&gt;
+                <tr onclick="showStockDetail('${stock.code}', '${stock.name}')">
+                    <td>
+                        <div class="stock-info">
+                            <div class="stock-name">${stock.name}</div>
+                            <div class="stock-meta">${stock.code} · ${stock.sector || '其他'}</div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="price">¥${stock.currentPrice.toFixed(2)}</div>
+                    </td>
+                    <td>
+                        <span class="${changeClass}">${sign}${(stock.changePercent || stock.change || 0).toFixed(2)}%</span>
+                    </td>
+                    <td>
+                        <span class="score-badge ${scoreClass}">${score.toFixed(1)}/10</span>
+                    </td>
+                    <td>
+                        <span class="advice-badge ${adviceClass}">${adviceText}</span>
+                    </td>
+                </tr>
             `;
         });
         tbody.innerHTML = html;
         updateStats();
     }
 
+    // 显示股票详情
+    async function showStockDetail(code, name) {
+        const modal = document.getElementById('detail-modal');
+        const title = document.getElementById('detail-title');
+        const body = document.getElementById('detail-body');
+        title.textContent = name + ' (' + code + ')';
+        body.innerHTML = '<p style="color:var(--text-tertiary);text-align:center;padding:20px;">加载中...</p>';
+        modal.classList.add('active');
+
+        try {
+            const response = await fetch('/api/deep_analysis?code=' + code);
+            const data = await response.json();
+            if (data.success) {
+                renderDetail(data);
+            } else {
+                renderSimpleDetail(code, name);
+            }
+        } catch (error) {
+            console.error('获取详情失败:', error);
+            renderSimpleDetail(code, name);
+        }
+    }
+
+    // 渲染简单详情
+    function renderSimpleDetail(code, name) {
+        const stock = stocks.find(s => s.code === code);
+        if (!stock) return;
+        const body = document.getElementById('detail-body');
+        body.innerHTML = `
+            <div class="detail-section">
+                <div class="detail-title">基本信息</div>
+                <div class="detail-item">
+                    <span class="detail-label">股票名称</span>
+                    <span>${stock.name}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">股票代码</span>
+                    <span>${stock.code}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">当前价格</span>
+                    <span>¥${stock.currentPrice.toFixed(2)}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">所属行业</span>
+                    <span>${stock.sector || '其他'}</span>
+                </div>
+            </div>
+            <div class="detail-section">
+                <div class="detail-title">估值指标</div>
+                <div class="detail-item">
+                    <span class="detail-label">PE (市盈率)</span>
+                    <span class="${stock.pe < 15 ? 'detail-good' : stock.pe > 30 ? 'detail-bad' : ''}">${stock.pe.toFixed(2)}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">PB (市净率)</span>
+                    <span class="${stock.pb < 1.5 ? 'detail-good' : stock.pb > 3 ? 'detail-bad' : ''}">${(stock.pb || 0).toFixed(2)}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">股息率</span>
+                    <span class="${stock.dividendYield > 3 ? 'detail-good' : stock.dividendYield < 1 ? 'detail-bad' : ''}">${(stock.dividendYield || 0).toFixed(2)}%</span>
+                </div>
+            </div>
+        `;
+    }
+
+    // 渲染深度分析详情
+    function renderDetail(data) {
+        const body = document.getElementById('detail-body');
+        let html = `
+            <div class="detail-section">
+                <div class="detail-title">综合评分: ${data.total_score}/10</div>
+            </div>
+            <div class="detail-section">
+                <div class="detail-title">现金流分析</div>
+                ${renderAnalysisItem(data.cashflow)}
+            </div>
+            <div class="detail-section">
+                <div class="detail-title">盈利质量分析</div>
+                ${renderAnalysisItem(data.profit)}
+            </div>
+            <div class="detail-section">
+                <div class="detail-title">债务风险分析</div>
+                ${renderAnalysisItem(data.debt)}
+            </div>
+            ${data.peers ? `
+            <div class="detail-section">
+                <div class="detail-title">同业对比</div>
+                ${renderAnalysisItem(data.peers)}
+            </div>` : ''}
+        `;
+        body.innerHTML = html;
+    }
+
+    // 渲染分析项
+    function renderAnalysisItem(obj) {
+        if (!obj) return '<p style="color:var(--text-tertiary);">暂无数据</p>';
+        let html = '';
+        for (const [key, value] of Object.entries(obj)) {
+            if (key === 'score') continue;
+            const label = key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+            html += `
+                <div class="detail-item">
+                    <span class="detail-label">${label}</span>
+                    <span>${typeof value === 'number' ? value.toFixed(2) : value}</span>
+                </div>
+            `;
+        }
+        return html;
+    }
+
+    // 关闭弹窗
+    document.getElementById('close-detail').addEventListener('click', () => {
+        document.getElementById('detail-modal').classList.remove('active');
+    });
+    document.getElementById('detail-modal').addEventListener('click', (e) => {
+        if (e.target.id === 'detail-modal') {
+            document.getElementById('detail-modal').classList.remove('active');
+        }
+    });
+
     // 渲染检查清单
     function renderChecklist() {
         const container = document.getElementById('checklist-container');
         let html = '';
-        checklistItems.forEach((item, index) =&gt; {
+        checklistItems.forEach((item, index) => {
             const checked = checkedItems.has(index);
             html += `
-                &lt;div class="checklist-item ${checked ? 'completed' : ''}" onclick="toggleChecklistItem(${index})"&gt;
-                    &lt;div class="checklist-checkbox ${checked ? 'checked' : ''}"&gt;&lt;/div&gt;
-                    &lt;span class="checklist-text"&gt;${item}&lt;/span&gt;
-                &lt;/div&gt;
+                <div class="checklist-item ${checked ? 'completed' : ''}" onclick="toggleChecklistItem(${index})">
+                    <div class="checklist-checkbox ${checked ? 'checked' : ''}"></div>
+                    <span class="checklist-text">${item}</span>
+                </div>
             `;
         });
         container.innerHTML = html;
@@ -958,12 +1408,12 @@
     function renderBiases() {
         const container = document.getElementById('biases-container');
         let html = '';
-        biases.forEach(bias =&gt; {
+        biases.forEach(bias => {
             html += `
-                &lt;div class="bias-item"&gt;
-                    &lt;span class="bias-icon"&gt;⚠️&lt;/span&gt;
-                    &lt;span class="bias-text"&gt;${bias}&lt;/span&gt;
-                &lt;/div&gt;
+                <div class="bias-item">
+                    <span class="bias-icon">⚠️</span>
+                    <span class="bias-text">${bias}</span>
+                </div>
             `;
         });
         container.innerHTML = html;
@@ -971,31 +1421,79 @@
 
     // 更新统计数据
     function updateStats() {
-        const avgScore = stocks.reduce((sum, s) =&gt; sum + s.score, 0) / stocks.length;
+        if (!stocks || stocks.length === 0) {
+            document.getElementById('avg-score').textContent = '--/10';
+            document.getElementById('market-mood').textContent = '中性';
+            return;
+        }
+        const totalScore = stocks.reduce((sum, s) => sum + (s.score || calculateScore(s)), 0);
+        const avgScore = totalScore / stocks.length;
         document.getElementById('avg-score').textContent = avgScore.toFixed(1) + '/10';
-        document.getElementById('market-mood').textContent = '中性';
+        
+        // 简单市场情绪判断
+        const upStocks = stocks.filter(s => s.changePercent >= 0).length;
+        if (upStocks / stocks.length > 0.7) {
+            document.getElementById('market-mood').textContent = '乐观';
+        } else if (upStocks / stocks.length < 0.3) {
+            document.getElementById('market-mood').textContent = '谨慎';
+        } else {
+            document.getElementById('market-mood').textContent = '中性';
+        }
     }
 
     // 添加股票按钮
-    document.getElementById('add-btn').addEventListener('click', function() {
+    document.getElementById('add-btn').addEventListener('click', async function() {
         const keyword = document.getElementById('stock-keyword').value.trim();
-        if (keyword) {
-            alert('添加股票功能需要后端支持');
+        const sector = document.getElementById('stock-sector').value.trim();
+        if (!keyword) {
+            alert('请输入股票名称或代码');
+            return;
+        }
+        
+        try {
+            const response = await fetch('/api/add', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ keyword, sector })
+            });
+            const data = await response.json();
+            if (data.success) {
+                alert(data.message);
+                document.getElementById('stock-keyword').value = '';
+                fetchStocks();
+            } else {
+                alert(data.error || '添加失败');
+            }
+        } catch (error) {
+            console.error('添加股票失败:', error);
+            alert('添加失败，请稍后重试');
         }
     });
 
     // 刷新按钮
     document.getElementById('refresh-btn').addEventListener('click', function() {
-        alert('刷新数据');
-        renderTable();
+        fetchStocks();
     });
 
     // 初始化
-    renderTable();
+    fetchStocks();
     renderChecklist();
     renderBiases();
-&lt;/script&gt;
+</script>
 
-&lt;/body&gt;
-&lt;/html&gt;
+<!-- Stock Detail Modal -->
+<div class="modal-overlay" id="detail-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="section-title" id="detail-title">股票详情</div>
+            <button class="modal-close" id="close-detail">×</button>
+        </div>
+        <div class="modal-body" id="detail-body">
+            <p style="color:var(--text-tertiary);">加载中...</p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
 

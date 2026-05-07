@@ -1,534 +1,824 @@
 
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🧠 芒格智慧 - A股投资组合分析</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="zh-CN"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;📊 芒格智慧 - 专业A股投资分析平台&lt;/title&gt;
+    &lt;link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"&gt;
+    &lt;style&gt;
         *{margin:0;padding:0;box-sizing:border-box}
-        body{font-family:'Inter',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:linear-gradient(135deg,#0f172a 0%,#1e293b 50%,#334155 100%);min-height:100vh;padding:20px;color:#e2e8f0}
-        .container{max-width:1400px;margin:0 auto}
-        .disclaimer{background:rgba(251,146,60,0.1);border:1px solid rgba(251,146,60,0.3);border-radius:12px;padding:16px 24px;margin-bottom:25px;text-align:center;backdrop-filter:blur(10px)}
-        .disclaimer-content{color:#fb923c;font-size:0.95rem;font-weight:500;display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap}
-        .header{text-align:center;margin-bottom:40px;padding:40px;background:linear-gradient(135deg,rgba(59,130,246,0.1) 0%,rgba(129,140,248,0.05) 100%);border-radius:20px;border:1px solid rgba(129,140,248,0.2);backdrop-filter:blur(10px);position:relative;overflow:hidden}
-        .header::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#3b82f6,#8b5cf6,#ec4899,#3b82f6);background-size:200% 100%;animation:shimmer 3s linear infinite}
-        @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
-        .header h1{font-size:2.5rem;font-weight:700;background:linear-gradient(135deg,#60a5fa 0%,#a78bfa 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:12px}
-        .header p{font-size:1.1rem;color:#94a3b8}
-        .header .time-info{font-size:0.9rem;color:#64748b;margin-top:15px;display:flex;align-items:center;justify-content:center;gap:8px}
-        .header .time-info .dot{width:8px;height:8px;background:#22c55e;border-radius:50%;animation:pulse 2s infinite}
-        @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.6;transform:scale(1.1)}}
-        .add-stock-section{margin-bottom:30px}
-        .add-stock-card{background:rgba(59,130,246,0.1);border:1px dashed rgba(59,130,246,0.4);border-radius:16px;padding:24px;display:flex;gap:16px;align-items:flex-end;flex-wrap:wrap}
-        .add-stock-input{flex:1;min-width:200px}
-        .add-stock-input label{display:block;color:#94a3b8;font-size:0.85rem;margin-bottom:8px}
-        .add-stock-input input{width:100%;padding:12px 16px;border-radius:10px;background:rgba(15,23,42,0.8);border:1px solid rgba(129,140,248,0.3);color:#e2e8f0;font-size:1rem;transition:all 0.3s ease}
-        .add-stock-input input:focus{outline:none;border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,0.2)}
-        .add-stock-btn{background:linear-gradient(135deg,#22c55e 0%,#16a34a 100%);color:white;border:none;padding:14px 32px;border-radius:10px;font-size:1rem;font-weight:600;cursor:pointer;transition:all 0.3s ease;display:flex;align-items:center;gap:8px}
-        .add-stock-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 10px 30px rgba(34,197,94,0.4)}
-        .add-stock-btn:disabled{opacity:0.6;cursor:not-allowed}
-        .add-stock-hint{color:#64748b;font-size:0.85rem;margin-top:12px;display:flex;gap:8px;align-items:center}
-        .summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin-bottom:30px}
-        .summary-card{background:linear-gradient(135deg,rgba(59,130,246,0.15) 0%,rgba(168,85,247,0.08) 100%);padding:28px;border-radius:16px;text-align:center;border:1px solid rgba(129,140,248,0.2);transition:all 0.3s ease}
-        .summary-card:hover{transform:translateY(-4px);box-shadow:0 20px 40px rgba(59,130,246,0.2)}
-        .summary-card.munger{background:linear-gradient(135deg,rgba(167,139,250,0.15) 0%,rgba(59,130,246,0.08) 100%)}
-        .summary-card .icon{font-size:2.5rem;margin-bottom:12px}
-        .summary-card .label{font-size:0.85rem;color:#94a3b8;margin-bottom:8px;text-transform:uppercase}
-        .summary-card .value{font-size:2.2rem;font-weight:700;background:linear-gradient(135deg,#60a5fa 0%,#a78bfa 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-        .card{background:rgba(15,23,42,0.8);border-radius:20px;padding:35px;margin-bottom:30px;border:1px solid rgba(129,140,248,0.15);backdrop-filter:blur(10px)}
-        .card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px}
-        .card-title{font-size:1.4rem;font-weight:600;color:#f8fafc;display:flex;align-items:center;gap:12px}
-        .card-title::before{content:'';width:4px;height:26px;background:linear-gradient(135deg,#3b82f6,#8b5cf6);border-radius:2px}
-        .refresh-btn{background:linear-gradient(135deg,#3b82f6 0%,#8b5cf6 100%);color:white;border:none;padding:10px 24px;border-radius:10px;font-size:0.95rem;font-weight:600;cursor:pointer;transition:all 0.3s ease}
-        .refresh-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 10px 30px rgba(59,130,246,0.4)}
-        .refresh-btn:disabled{opacity:0.6;cursor:not-allowed}
-        .table-wrapper{overflow-x:auto;border-radius:14px;border:1px solid rgba(129,140,248,0.15)}
-        table{width:100%;border-collapse:collapse}
-        th{background:linear-gradient(135deg,rgba(59,130,246,0.2) 0%,rgba(139,92,246,0.1) 100%);color:#e2e8f0;font-weight:600;font-size:0.9rem;padding:18px 16px;text-align:left;border-bottom:2px solid rgba(129,140,248,0.3)}
-        td{padding:18px 16px;color:#cbd5e1;font-size:0.95rem;border-bottom:1px solid rgba(129,140,248,0.1)}
-        tr.stock-row{cursor:pointer;transition:all 0.2s ease}
-        tr.stock-row:hover{background:rgba(59,130,246,0.15)!important}
-        tr.stock-row:hover td{color:#f8fafc}
-        .price-display{font-size:1.15rem;font-weight:700;color:#60a5fa}
-        .price-change{font-size:0.85rem;margin-left:6px;padding:3px 8px;border-radius:6px;font-weight:500}
-        .price-change.up{color:#22c55e;background:rgba(34,197,94,0.1)}
-        .price-change.down{color:#f87171;background:rgba(248,113,113,0.1)}
-        .signal-badge{padding:8px 16px;border-radius:10px;font-weight:600;font-size:0.9rem}
-        .signal-green{background:rgba(34,197,94,0.15);color:#4ade80;border:1px solid rgba(34,197,94,0.3)}
-        .signal-yellow{background:rgba(250,204,21,0.15);color:#facc15;border:1px solid rgba(250,204,21,0.3)}
-        .signal-orange{background:rgba(251,146,60,0.15);color:#fb923c;border:1px solid rgba(251,146,60,0.3)}
-        .signal-red{background:rgba(248,113,113,0.15);color:#f87171;border:1px solid rgba(248,113,113,0.3)}
-        .legend{display:flex;gap:24px;flex-wrap:wrap;margin-top:25px;padding:20px;background:rgba(59,130,246,0.05);border-radius:12px}
-        .legend-item{display:flex;align-items:center;gap:10px;color:#94a3b8;font-size:0.9rem}
-        .legend-dot{width:14px;height:14px;border-radius:50%}
-        .dot-green{background:#22c55e}.dot-yellow{background:#facc15}.dot-orange{background:#fb923c}.dot-red{background:#f87171}
-        .principles-list{list-style:none;line-height:1.8}
-        .principles-list li{padding:14px 0;padding-left:32px;position:relative;color:#cbd5e1;border-bottom:1px solid rgba(129,140,248,0.1)}
-        .principles-list li::before{content:'✨';position:absolute;left:0}
-        .principles-list strong{color:#f8fafc}
-        .modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(5px);z-index:1000;overflow-y:auto;padding:20px}
-        .modal-overlay.active{display:flex;justify-content:center;align-items:flex-start}
-        .modal-content{background:linear-gradient(135deg,#1e293b 0%,#0f172a 100%);border:1px solid rgba(129,140,248,0.3);border-radius:20px;max-width:900px;width:100%;margin:40px auto;overflow:hidden;animation:modalSlideIn 0.3s ease}
-        @keyframes modalSlideIn{from{transform:translateY(-50px);opacity:0}to{transform:translateY(0);opacity:1}}
-        .modal-header{background:linear-gradient(135deg,rgba(59,130,246,0.2) 0%,rgba(139,92,246,0.1) 100%);padding:24px 32px;border-bottom:1px solid rgba(129,140,248,0.2);display:flex;justify-content:space-between;align-items:center}
-        .modal-header h2{font-size:1.5rem;color:#f8fafc;display:flex;align-items:center;gap:12px}
-        .modal-close{background:rgba(248,113,113,0.2);border:1px solid rgba(248,113,113,0.3);color:#f87171;width:36px;height:36px;border-radius:10px;cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center;transition:all 0.2s ease}
-        .modal-close:hover{background:rgba(248,113,113,0.3);transform:scale(1.1)}
-        .modal-body{padding:32px;max-height:70vh;overflow-y:auto}
-        .modal-body::-webkit-scrollbar{width:8px}
-        .modal-body::-webkit-scrollbar-track{background:rgba(129,140,248,0.1);border-radius:4px}
-        .modal-body::-webkit-scrollbar-thumb{background:rgba(129,140,248,0.3);border-radius:4px}
-        .report-section{margin-bottom:28px;padding-bottom:28px;border-bottom:1px solid rgba(129,140,248,0.1)}
-        .report-section:last-child{border-bottom:none}
-        .report-section h3{font-size:1.1rem;color:#a78bfa;margin-bottom:16px;display:flex;align-items:center;gap:8px}
-        .report-table{width:100%;border-collapse:collapse;margin-top:12px}
-        .report-table th,.report-table td{padding:12px 16px;text-align:left;border-bottom:1px solid rgba(129,140,248,0.1)}
-        .report-table th{background:rgba(59,130,246,0.1);font-size:0.85rem;text-transform:uppercase}
-        .report-table td{font-size:0.95rem}
-        .report-score{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:8px;font-weight:600}
-        .score-excellent{background:rgba(34,197,94,0.15);color:#4ade80}
-        .score-good{background:rgba(250,204,21,0.15);color:#facc15}
-        .score-average{background:rgba(251,146,60,0.15);color:#fb923c}
-        .score-poor{background:rgba(248,113,113,0.15);color:#f87171}
-        .data-tag{font-size:0.7rem;padding:2px 6px;border-radius:4px;font-weight:500}
-        .tag-real{background:rgba(34,197,94,0.2);color:#4ade80}
-        .tag-est{background:rgba(251,146,60,0.2);color:#fb923c}
-        .tag-ref{background:rgba(129,140,248,0.2);color:#818cf8}
-        
-        /* 芒格专用样式 */
-        .munger-status{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;margin-bottom:30px}
-        .munger-status-item{background:linear-gradient(135deg,rgba(167,139,250,0.15) 0%,rgba(59,130,246,0.1) 100%);border:1px solid rgba(167,139,250,0.2);border-radius:16px;padding:24px}
-        .munger-status-item h4{font-size:1rem;color:#a78bfa;margin-bottom:12px;display:flex;align-items:center;gap:8px}
-        .munger-status-item .value{font-size:1.5rem;font-weight:700;color:#f8fafc;margin-bottom:8px}
-        .munger-status-item .desc{color:#94a3b8;font-size:0.9rem}
-        .munger-score-card{background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.3);border-radius:16px;padding:24px;margin-bottom:20px}
-        .munger-score-card h4{color:#a78bfa;font-size:1.1rem;margin-bottom:16px}
-        .progress-bar{height:12px;background:rgba(129,140,248,0.2);border-radius:6px;overflow:hidden;margin-bottom:12px}
-        .progress-fill{height:100%;background:linear-gradient(90deg,#22c55e 0%,#3b82f6 100%);transition:width 0.5s ease}
-        .checklist-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid rgba(129,140,248,0.1)}
-        .checklist-item:last-child{border-bottom:none}
-        .checklist-checkbox{width:22px;height:22px;border:2px solid rgba(129,140,248,0.3);border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s ease}
-        .checklist-checkbox.checked{background:linear-gradient(135deg,#22c55e,#16a34a);border-color:#22c55e}
-        .checklist-checkbox.checked::after{content:'✓';color:white;font-weight:bold}
-        .bias-item{padding:12px 16px;background:rgba(248,113,113,0.1);border-left:3px solid #f87171;border-radius:8px;margin-bottom:12px}
-        .bias-item:last-child{margin-bottom:0}
-        
-        @media(max-width:768px){.header h1{font-size:1.8rem}th,td{padding:12px 10px;font-size:0.85rem}.modal-content{margin:20px}.modal-body{padding:20px}}
-    </style>
-</head>
-<body>
+        body{
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(180deg, #0a0e1a 0%, #111827 50%, #0f172a 100%);
+            min-height: 100vh;
+            color: #e5e7eb;
+            line-height: 1.6;
+        }
 
-<div class="container">
+        /* 容器 */
+        .container{
+            max-width: 1500px;
+            margin: 0 auto;
+            padding: 24px;
+        }
 
-    <div class="disclaimer">
-        <div class="disclaimer-content">
-            ⚠️ 免责声明：本工具仅供学习研究，不构成任何投资建议！股市有风险，投资需谨慎！
-        </div>
-    </div>
+        /* 顶部通知栏 */
+        .top-bar{
+            background: linear-gradient(90deg, #1f2937 0%, #111827 100%);
+            border-bottom: 1px solid #374151;
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
 
-    <div class="header">
-        <h1>🧠 芒格智慧 - A股投资组合</h1>
-        <p>用查理·芒格的思维方式做投资决策</p>
-        <div class="time-info">
-            <span class="dot"></span>
-            <span id="current-time">加载中...</span>
-            <span style="margin-left:20px;">🚀 芒格分析已启用</span>
-        </div>
-    </div>
+        .top-bar-left{
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
 
-    <div class="add-stock-section">
-        <div class="add-stock-card">
-            <div class="add-stock-input">
-                <label>📈 添加股票（名称或代码）</label>
-                <input type="text" id="stock-keyword" placeholder="例如：贵州茅台 或 600519">
-            </div>
-            <div class="add-stock-input" style="min-width:150px;max-width:200px">
-                <label>🏷️ 所属行业</label>
-                <input type="text" id="stock-sector" placeholder="例如：白酒" value="其他">
-            </div>
-            <button class="add-stock-btn" id="add-btn">➕ 添加</button>
-        </div>
-        <div class="add-stock-hint">
-            💡 提示：支持模糊搜索，输入公司名称或6位代码即可
-        </div>
-    </div>
+        .top-bar-left h1{
+            font-size: 18px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #059669 0%, #0d9488 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
 
-    <!-- 芒格决策状态 -->
-    <div class="card">
-        <div class="card-header">
-            <div class="card-title">🧠 芒格决策状态</div>
-        </div>
-        <div id="munger-status" class="munger-status">
-            <div class="munger-status-item">
-                <h4>⏳ 冷静期</h4>
-                <div class="value" id="cooling-status">加载中...</div>
-                <div class="desc">距离上次决策的时间</div>
-            </div>
-            <div class="munger-status-item">
-                <h4>📋 检查清单</h4>
-                <div class="value" id="checklist-progress">0/7</div>
-                <div class="desc">决策检查清单完成度</div>
-            </div>
-            <div class="munger-status-item">
-                <h4>📊 市场情绪</h4>
-                <div class="value" id="market-mood">😐 中性</div>
-                <div class="desc">当前市场整体情绪</div>
-            </div>
-            <div class="munger-status-item">
-                <h4>⭐ 组合评分</h4>
-                <div class="value" id="portfolio-score">--/10</div>
-                <div class="desc">投资组合整体评分</div>
-            </div>
-        </div>
-    </div>
+        .status-dot{
+            width: 8px;
+            height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
 
-    <div class="summary-grid">
-        <div class="summary-card">
-            <div class="icon">📊</div>
-            <div class="label">持仓股票</div>
-            <div class="value" id="total-count">0</div>
-        </div>
-        <div class="summary-card munger">
-            <div class="icon">🧠</div>
-            <div class="label">芒格平均分</div>
-            <div class="value" id="munger-avg-score">--</div>
-        </div>
-        <div class="summary-card">
-            <div class="icon">🟢</div>
-            <div class="label">持有建议</div>
-            <div class="value" id="hold-count">0</div>
-        </div>
-        <div class="summary-card">
-            <div class="icon">🟡</div>
-            <div class="label">等待建议</div>
-            <div class="value" id="wait-count">0</div>
-        </div>
-    </div>
+        .status-text{
+            color: #9ca3af;
+            font-size: 13px;
+        }
 
-    <div class="card">
-        <div class="card-header">
-            <div class="card-title">📈 持仓分析</div>
-            <button class="refresh-btn" id="refresh-btn">🔄 刷新数据</button>
-        </div>
-        <div class="table-wrapper">
-            <table id="stocks-table">
-                <thead>
-                    <tr>
-                        <th>股票名称</th>
-                        <th>当前价格</th>
-                        <th>估值买点</th>
-                        <th>⭐ 芒格评分</th>
-                        <th>💡 建议</th>
-                    </tr>
-                </thead>
-                <tbody id="stocks-tbody">
-                    <tr><td colspan="5" style="text-align:center;color:#94a3b8">加载中...</td></tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
+        @keyframes pulse{
+            0%,100%{opacity:1;transform:scale(1)}
+            50%{opacity:0.6;transform:scale(1.2)}
+        }
 
-    <!-- 决策检查清单 -->
-    <div class="card">
-        <div class="card-header">
-            <div class="card-title">📋 决策检查清单</div>
-        </div>
-        <div id="checklist-container">
-            <p style="color:#94a3b8">加载中...</p>
-        </div>
-    </div>
+        /* 主内容区域 */
+        .main-grid{
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 24px;
+            margin-top: 24px;
+        }
 
-    <!-- 心理偏差自检 -->
-    <div class="card">
-        <div class="card-header">
-            <div class="card-title">⚠️ 心理偏差自检</div>
-        </div>
-        <div id="biases-container">
-            <p style="color:#94a3b8">加载中...</p>
-        </div>
-    </div>
+        /* 侧边栏 */
+        .sidebar{
+            background: #111827;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #1f2937;
+            height: fit-content;
+            position: sticky;
+            top: 80px;
+        }
 
-    <!-- 芒格建议 -->
-    <div class="card">
-        <div class="card-header">
-            <div class="card-title">💡 芒格式建议</div>
-        </div>
-        <ul class="principles-list" id="munger-suggestions">
-            <li><strong>耐心等待</strong> - 好公司常有，但好价格不常有</li>
-            <li><strong>能力圈原则</strong> - 只投资你能理解的公司</li>
-            <li><strong>聚焦质量</strong> - 关注商业模式简单、现金流稳定的公司</li>
-            <li><strong>定期检视</strong> - 每月回顾一次组合，检查投资逻辑是否成立</li>
-        </ul>
-    </div>
+        .sidebar-title{
+            font-size: 12px;
+            font-weight: 600;
+            color: #9ca3af;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
 
-    <div class="card">
-        <div class="card-header">
-            <div class="card-title">📚 芒格投资原则</div>
-        </div>
-        <ul class="principles-list">
-            <li><strong>1. 市场先生</strong> - 把市场波动看作你的朋友而不是敌人</li>
-            <li><strong>2. 安全边际</strong> - 永远以打折价买入优质资产</li>
-            <li><strong>3. 能力圈</strong> - 只在自己理解的领域内投资</li>
-            <li><strong>4. 集中投资</strong> - 把鸡蛋放在少数几个篮子里，然后看好它们</li>
-            <li><strong>5. 耐心持有</strong> - 优秀的公司值得长期拥有</li>
-            <li><strong>6. 逆向思维</strong> - 在别人贪婪时恐惧，在别人恐惧时贪婪</li>
-            <li><strong>7. 理性思考</strong> - 避免情绪化，保持客观中立</li>
-        </ul>
-    </div>
+        .sidebar-section{
+            margin-bottom: 28px;
+        }
 
-</div>
+        .sidebar-item{
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #d1d5db;
+        }
 
-<div class="modal-overlay" id="stock-modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2>🔍 股票深度分析</h2>
-            <button class="modal-close" onclick="closeModal()">✕</button>
-        </div>
-        <div class="modal-body" id="modal-body">
-            <p style="color:#94a3b8">加载中...</p>
-        </div>
-    </div>
-</div>
+        .sidebar-item:hover{
+            background: #1f2937;
+        }
 
-<script>
-let stocksData = [];
-let mungerData = null;
-let checklist = [];
+        .sidebar-item-icon{
+            font-size: 20px;
+        }
 
-document.addEventListener('DOMContentLoaded', () => {
-    loadStocks();
-    updateTime();
+        /* 主内容区 */
+        .main-content{
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* 重要信息卡片 */
+        .munger-status-grid{
+            display: grid;
+            grid-template-columns: repeat(4,1fr);
+            gap: 16px;
+        }
+
+        .munger-card{
+            background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
+            border: 1px solid #374151;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .munger-card-header{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .munger-card-title{
+            font-size: 12px;
+            font-weight: 600;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .munger-card-value{
+            font-size: 28px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .munger-card-desc{
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        /* 主要内容卡片 */
+        .card{
+            background: #111827;
+            border-radius: 12px;
+            border: 1px solid #1f2937;
+        }
+
+        .card-header{
+            padding: 20px 24px;
+            border-bottom: 1px solid #1f2937;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title{
+            font-size: 16px;
+            font-weight: 600;
+            color: #f9fafb;
+        }
+
+        .card-body{
+            padding: 24px;
+        }
+
+        /* 数据表格 */
+        .table-container{
+            overflow-x: auto;
+        }
+
+        table{
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead th{
+            background: #0f172a;
+            color: #9ca3af;
+            font-weight: 600;
+            font-size: 12px;
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid #1f2937;
+        }
+
+        tbody td{
+            padding: 16px;
+            font-size: 14px;
+            color: #d1d5db;
+            border-bottom: 1px solid #1f2937;
+        }
+
+        tbody tr:hover{
+            background: #0f172a;
+        }
+
+        .stock-name{
+            font-weight: 600;
+            color: #f9fafb;
+            margin-bottom: 4px;
+        }
+
+        .stock-code{
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        /* 价格信息 */
+        .price{
+            font-size: 16px;
+            font-weight: 700;
+            color: #60a5fa;
+        }
+
+        .change-up{
+            color: #22c55e;
+            background: rgba(34,197,94,0.1);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .change-down{
+            color: #f87171;
+            background: rgba(248,113,113,0.1);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        /* 评分展示 */
+        .score-badge{
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .score-excellent{
+            background: rgba(34,197,94,0.15);
+            color: #4ade80;
+        }
+
+        .score-good{
+            background: rgba(250,204,21,0.15);
+            color: #facc15;
+        }
+
+        .score-average{
+            background: rgba(251,146,60,0.15);
+            color: #fb923c;
+        }
+
+        .score-poor{
+            background: rgba(248,113,113,0.15);
+            color: #f87171;
+        }
+
+        /* 建议标签 */
+        .advice-badge{
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .advice-hold{
+            background: rgba(34,197,94,0.15);
+            color: #4ade80;
+            border: 1px solid rgba(34,197,94,0.3);
+        }
+
+        .advice-wait{
+            background: rgba(250,204,21,0.15);
+            color: #facc15;
+            border: 1px solid rgba(250,204,21,0.3);
+        }
+
+        .advice-watch{
+            background: rgba(248,113,113,0.15);
+            color: #f87171;
+            border: 1px solid rgba(248,113,113,0.3);
+        }
+
+        /* 检查清单项 */
+        .checklist-item{
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: #0f172a;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .checklist-item:hover{
+            background: #1f2937;
+        }
+
+        .checklist-checkbox{
+            width: 22px;
+            height: 22px;
+            border: 2px solid #374151;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .checklist-checkbox.checked{
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            border-color: #22c55e;
+        }
+
+        .checklist-checkbox.checked::after{
+            content: '✓';
+            color: white;
+            font-weight: bold;
+        }
+
+        /* 心理偏差项 */
+        .bias-item{
+            padding: 16px;
+            background: rgba(248,113,113,0.05);
+            border-left: 3px solid #f87171;
+            margin-bottom: 12px;
+            border-radius: 6px;
+        }
+
+        /* 添加股票区域 */
+        .add-stock-area{
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .add-stock-input{
+            flex: 1;
+        }
+
+        .add-stock-input label{
+            display: block;
+            color: #9ca3af;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .add-stock-input input{
+            width: 100%;
+            padding: 12px 16px;
+            background: #0f172a;
+            border: 1px solid #374151;
+            border-radius: 6px;
+            color: #f9fafb;
+            font-size: 14px;
+        }
+
+        .add-stock-input input:focus{
+            outline: none;
+            border-color: #059669;
+        }
+
+        .btn{
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary{
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            color: white;
+        }
+
+        .btn-primary:hover{
+            transform: translateY(-1px);
+        }
+
+        /* 原则列表 */
+        .principles-grid{
+            display: grid;
+            grid-template-columns: repeat(2,1fr);
+            gap: 16px;
+        }
+
+        .principle-item{
+            padding: 16px;
+            background: #0f172a;
+            border-radius: 8px;
+            border: 1px solid #1f2937;
+        }
+
+        .principle-icon{
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+
+        .principle-title{
+            font-size: 14px;
+            font-weight: 600;
+            color: #d1d5db;
+            margin-bottom: 4px;
+        }
+
+        .principle-desc{
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        /* 响应式 */
+        @media(max-width: 1024px){
+            .main-grid{
+                grid-template-columns: 1fr;
+            }
+            .sidebar{
+                position: static;
+            }
+            .munger-status-grid{
+                grid-template-columns: repeat(2,1fr);
+            }
+        }
+
+        @media(max-width: 768px){
+            .munger-status-grid{
+                grid-template-columns: 1fr;
+            }
+            .principles-grid{
+                grid-template-columns: 1fr;
+            }
+        }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;div class="top-bar"&gt;
+    &lt;div class="top-bar-left"&gt;
+        &lt;div style="display:flex;align-items:center;gap:12px;"&gt;
+            &lt;h1&gt;📊 芒格智慧 - 专业投资分析平台&lt;/h1&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div style="display:flex;align-items:center;gap:12px;"&gt;
+        &lt;div class="status-dot"&gt;&lt;/div&gt;
+        &lt;span class="status-text" id="time-display"&gt;实时运行中&lt;/span&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div class="container"&gt;
+    &lt;div class="main-grid"&gt;
+        &lt;!-- 侧边栏 --&gt;
+        &lt;div class="sidebar"&gt;
+            &lt;div class="sidebar-section"&gt;
+                &lt;div class="sidebar-title"&gt;导航菜单&lt;/div&gt;
+                &lt;div class="sidebar-item"&gt;
+                    &lt;span class="sidebar-item-icon"&gt;📈&lt;/span&gt;
+                    &lt;span&gt;投资组合&lt;/span&gt;
+                &lt;/div&gt;
+                &lt;div class="sidebar-item"&gt;
+                    &lt;span class="sidebar-item-icon"&gt;🧠&lt;/span&gt;
+                    &lt;span&gt;芒格分析&lt;/span&gt;
+                &lt;/div&gt;
+                &lt;div class="sidebar-item"&gt;
+                    &lt;span class="sidebar-item-icon"&gt;✅&lt;/span&gt;
+                    &lt;span&gt;决策检查&lt;/span&gt;
+                &lt;/div&gt;
+                &lt;div class="sidebar-item"&gt;
+                    &lt;span class="sidebar-item-icon"&gt;⚠️&lt;/span&gt;
+                    &lt;span&gt;心理偏差&lt;/span&gt;
+                &lt;/div&gt;
+                &lt;div class="sidebar-item"&gt;
+                    &lt;span class="sidebar-item-icon"&gt;📚&lt;/span&gt;
+                    &lt;span&gt;投资原则&lt;/span&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+
+            &lt;div class="sidebar-section"&gt;
+                &lt;div class="sidebar-title"&gt;市场概览&lt;/div&gt;
+                &lt;div style="color:#6b7280;font-size:13px;"&gt;
+                    上次更新：刚刚
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;!-- 主内容 --&gt;
+        &lt;div class="main-content"&gt;
+            &lt;!-- 芒格状态卡片 --&gt;
+            &lt;div class="munger-status-grid"&gt;
+                &lt;div class="munger-card"&gt;
+                    &lt;div class="munger-card-header"&gt;
+                        &lt;div class="munger-card-title"&gt;冷静期状态&lt;/div&gt;
+                        &lt;span style="color:#22c55e;"&gt;✅&lt;/span&gt;
+                    &lt;/div&gt;
+                    &lt;div class="munger-card-value"&gt;已就绪&lt;/div&gt;
+                    &lt;div class="munger-card-desc"&gt;距离上次决策已超过24小时&lt;/div&gt;
+                &lt;/div&gt;
+
+                &lt;div class="munger-card"&gt;
+                    &lt;div class="munger-card-header"&gt;
+                        &lt;div class="munger-card-title"&gt;检查清单&lt;/div&gt;
+                    &lt;/div&gt;
+                    &lt;div class="munger-card-value" id="checklist-progress"&gt;0/7&lt;/div&gt;
+                    &lt;div class="munger-card-desc"&gt;已完成的决策检查项&lt;/div&gt;
+                &lt;/div&gt;
+
+                &lt;div class="munger-card"&gt;
+                    &lt;div class="munger-card-header"&gt;
+                        &lt;div class="munger-card-title"&gt;市场情绪&lt;/div&gt;
+                    &lt;/div&gt;
+                    &lt;div class="munger-card-value" id="market-mood"&gt;中性&lt;/div&gt;
+                    &lt;div class="munger-card-desc"&gt;当前整体市场状态&lt;/div&gt;
+                &lt;/div&gt;
+
+                &lt;div class="munger-card"&gt;
+                    &lt;div class="munger-card-header"&gt;
+                        &lt;div class="munger-card-title"&gt;组合评分&lt;/div&gt;
+                    &lt;/div&gt;
+                    &lt;div class="munger-card-value" id="avg-score"&gt;--/10&lt;/div&gt;
+                    &lt;div class="munger-card-desc"&gt;整体投资组合质量评分&lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+
+            &lt;!-- 添加股票区域 --&gt;
+            &lt;div class="card"&gt;
+                &lt;div class="card-header"&gt;
+                    &lt;div class="card-title"&gt;📈 添加新股票&lt;/div&gt;
+                &lt;/div&gt;
+                &lt;div class="card-body"&gt;
+                    &lt;div class="add-stock-area"&gt;
+                        &lt;div class="add-stock-input"&gt;
+                            &lt;label&gt;股票名称/代码&lt;/label&gt;
+                            &lt;input type="text" id="stock-keyword" placeholder="例如：贵州茅台 或 600519"&gt;
+                        &lt;/div&gt;
+                        &lt;div class="add-stock-input" style="max-width:200px;"&gt;
+                            &lt;label&gt;所属行业&lt;/label&gt;
+                            &lt;input type="text" id="stock-sector" value="其他"&gt;
+                        &lt;/div&gt;
+                        &lt;div style="display:flex;align-items:flex-end;"&gt;
+                            &lt;button class="btn btn-primary" id="add-stock-btn"&gt;添加&lt;/button&gt;
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+
+            &lt;!-- 投资组合表格 --&gt;
+            &lt;div class="card"&gt;
+                &lt;div class="card-header"&gt;
+                    &lt;div class="card-title"&gt;📊 投资组合概览&lt;/div&gt;
+                    &lt;button class="btn btn-primary" id="refresh-btn"&gt;刷新数据&lt;/button&gt;
+                &lt;/div&gt;
+                &lt;div class="card-body"&gt;
+                    &lt;div class="table-container"&gt;
+                        &lt;table id="stocks-table"&gt;
+                            &lt;thead&gt;
+                                &lt;tr&gt;
+                                    &lt;th&gt;股票名称&lt;/th&gt;
+                                    &lt;th&gt;当前价格&lt;/th&gt;
+                                    &lt;th&gt;涨跌幅&lt;/th&gt;
+                                    &lt;th&gt;芒格评分&lt;/th&gt;
+                                    &lt;th&gt;建议&lt;/th&gt;
+                                &lt;/tr&gt;
+                            &lt;/thead&gt;
+                            &lt;tbody id="stocks-tbody"&gt;
+                                &lt;tr&gt;
+                                    &lt;td colspan="5" style="text-align:center;color:#6b7280;"&gt;加载中...&lt;/td&gt;
+                                &lt;/tr&gt;
+                            &lt;/tbody&gt;
+                        &lt;/table&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+
+            &lt;!-- 决策检查清单 --&gt;
+            &lt;div class="card"&gt;
+                &lt;div class="card-header"&gt;
+                    &lt;div class="card-title"&gt;✅ 决策检查清单&lt;/div&gt;
+                &lt;/div&gt;
+                &lt;div class="card-body" id="checklist-container"&gt;
+                    &lt;p style="color:#6b7280;"&gt;加载中...&lt;/p&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+
+            &lt;!-- 心理偏差自检 --&gt;
+            &lt;div class="card"&gt;
+                &lt;div class="card-header"&gt;
+                    &lt;div class="card-title"&gt;⚠️ 心理偏差自检&lt;/div&gt;
+                &lt;/div&gt;
+                &lt;div class="card-body" id="biases-container"&gt;
+                    &lt;p style="color:#6b7280;"&gt;加载中...&lt;/p&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+
+            &lt;!-- 芒格投资原则 --&gt;
+            &lt;div class="card"&gt;
+                &lt;div class="card-header"&gt;
+                    &lt;div class="card-title"&gt;📚 芒格投资原则&lt;/div&gt;
+                &lt;/div&gt;
+                &lt;div class="card-body"&gt;
+                    &lt;div class="principles-grid"&gt;
+                        &lt;div class="principle-item"&gt;
+                            &lt;div class="principle-icon"&gt;🎯&lt;/div&gt;
+                            &lt;div class="principle-title"&gt;能力圈原则&lt;/div&gt;
+                            &lt;div class="principle-desc"&gt;只在自己理解的领域内投资&lt;/div&gt;
+                        &lt;/div&gt;
+                        &lt;div class="principle-item"&gt;
+                            &lt;div class="principle-icon"&gt;💎&lt;/div&gt;
+                            &lt;div class="principle-title"&gt;安全边际&lt;/div&gt;
+                            &lt;div class="principle-desc"&gt;以显著折扣价买入优质公司&lt;/div&gt;
+                        &lt;/div&gt;
+                        &lt;div class="principle-item"&gt;
+                            &lt;div class="principle-icon"&gt;⏳&lt;/div&gt;
+                            &lt;div class="principle-title"&gt;长期持有&lt;/div&gt;
+                            &lt;div class="principle-desc"&gt;优秀公司值得长期拥有&lt;/div&gt;
+                        &lt;/div&gt;
+                        &lt;div class="principle-item"&gt;
+                            &lt;div class="principle-icon"&gt;🔄&lt;/div&gt;
+                            &lt;div class="principle-title"&gt;逆向思维&lt;/div&gt;
+                            &lt;div class="principle-desc"&gt;在别人恐惧时贪婪&lt;/div&gt;
+                        &lt;/div&gt;
+                        &lt;div class="principle-item"&gt;
+                            &lt;div class="principle-icon"&gt;📊&lt;/div&gt;
+                            &lt;div class="principle-title"&gt;逆向思维&lt;/div&gt;
+                            &lt;div class="principle-desc"&gt;在别人贪婪时恐惧&lt;/div&gt;
+                        &lt;/div&gt;
+                        &lt;div class="principle-item"&gt;
+                            &lt;div class="principle-icon"&gt;🧠&lt;/div&gt;
+                            &lt;div class="principle-title"&gt;理性思考&lt;/div&gt;
+                            &lt;div class="principle-desc"&gt;避免情绪化决策&lt;/div&gt;
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+    // 示例数据
+    let stocks = [
+        { code: '600519', name: '贵州茅台', price: 1382.96, change: 0.58, sector: '白酒', score: 8.2, advice: 'wait' },
+        { code: '000858', name: '五粮液', price: 92.91, change: 0.70, sector: '白酒', score: 7.5, advice: 'watch' },
+        { code: '601888', name: '中国中免', price: 62.95, change: -0.13, sector: '免税', score: 7.0, advice: 'watch' },
+        { code: '600029', name: '南方航空', price: 5.62, change: 2.00, sector: '航空', score: 6.5, advice: 'watch' },
+        { code: '600900', name: '长江电力', price: 27.10, change: -0.37, sector: '电力', score: 8.5, advice: 'hold' }
+    ];
+
+    let checklistItems = [
+        '商业模式分析完成', '竞争优势分析完成', '管理层评估完成',
+        '估值分析完成', '已冷静思考至少24小时', '已考虑反面证据', '已检查心理偏差'
+    ];
+
+    let biases = [
+        '确认偏差 - 只看支持自己观点的信息',
+        '过度自信 - 高估自己的能力',
+        '避免怀疑 - 急于做决定',
+        '羊群效应 - 从众行为',
+        '损失厌恶 - 对损失更敏感',
+        '过度乐观 - 高估成功概率'
+    ];
+
+    let checkedItems = new Set();
+
+    // 更新时间
+    function updateTime() {
+        const now = new Date();
+        document.getElementById('time-display').textContent = now.toLocaleString('zh-CN');
+    }
     setInterval(updateTime, 1000);
-});
+    updateTime();
 
-function updateTime() {
-    document.getElementById('current-time').textContent = 
-        new Date().toLocaleString('zh-CN');
-}
+    // 渲染表格
+    function renderTable() {
+        const tbody = document.getElementById('stocks-tbody');
+        let html = '';
+        stocks.forEach(stock =&gt; {
+            let changeClass = stock.change &gt;= 0 ? 'change-up' : 'change-down';
+            let sign = stock.change &gt;= 0 ? '+' : '';
+            
+            let scoreClass = 'score-average';
+            if (stock.score &gt;= 8) scoreClass = 'score-excellent';
+            else if (stock.score &gt;= 7) scoreClass = 'score-good';
+            else if (stock.score &gt;= 6) scoreClass = 'score-average';
+            else scoreClass = 'score-poor';
 
-async function loadStocks() {
-    try {
-        const res = await fetch('/api/get_stocks');
-        const data = await res.json();
-        if(data.success) {
-            stocksData = data.stocks;
-            await loadMungerData();
-            renderStocksTable();
-            updateSummary();
-        }
-    } catch(e) {
-        console.error('加载失败', e);
-        document.getElementById('stocks-tbody').innerHTML = 
-            '<tr><td colspan="5" style="text-align:center;color:#f87171">加载失败，请确保API服务已启动</td></tr>';
+            let adviceClass = stock.advice === 'hold' ? 'advice-hold' : 
+                              stock.advice === 'wait' ? 'advice-wait' : 'advice-watch';
+            let adviceText = stock.advice === 'hold' ? '持有' : 
+                             stock.advice === 'wait' ? '等待' : '观望';
+
+            html += `
+                &lt;tr&gt;
+                    &lt;td&gt;
+                        &lt;div class="stock-name"&gt;${stock.name}&lt;/div&gt;
+                        &lt;div class="stock-code"&gt;${stock.code} · ${stock.sector}&lt;/div&gt;
+                    &lt;/td&gt;
+                    &lt;td&gt;
+                        &lt;span class="price"&gt;¥${stock.price.toFixed(2)}&lt;/span&gt;
+                    &lt;/td&gt;
+                    &lt;td&gt;
+                        &lt;span class="${changeClass}"&gt;${sign}${stock.change.toFixed(2)}%&lt;/span&gt;
+                    &lt;/td&gt;
+                    &lt;td&gt;
+                        &lt;span class="score-badge ${scoreClass}"&gt;${stock.score.toFixed(1)}/10&lt;/span&gt;
+                    &lt;/td&gt;
+                    &lt;td&gt;
+                        &lt;span class="advice-badge ${adviceClass}"&gt;${adviceText}&lt;/span&gt;
+                    &lt;/td&gt;
+                &lt;/tr&gt;
+            `;
+        });
+
+        tbody.innerHTML = html;
+        updateStats();
     }
-}
 
-async function loadMungerData() {
-    try {
-        const res = await fetch('/api/munger/portfolio');
-        const data = await res.json();
-        if(data.success) {
-            mungerData = data;
-            renderMungerStatus();
-            renderChecklist(data.checklist);
-            renderBiases(data.biases);
-            renderMungerSuggestions(data.munger_portfolio.munger_suggestions);
-        }
-    } catch(e) {
-        console.error('加载芒格数据失败', e);
-    }
-}
-
-function renderStocksTable() {
-    const tbody = document.getElementById('stocks-tbody');
-    if(!stocksData || stocksData.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#94a3b8">暂无数据</td></tr>';
-        return;
-    }
-
-    let html = '';
-    stocksData.forEach(s => {
-        const mungerScore = mungerData?.munger_scores?.[s.code];
-        const changeClass = s.changePercent >= 0 ? 'up' : 'down';
-        const changeSign = s.changePercent >= 0 ? '+' : '';
-        
-        const signalClass = s.currentPrice <= s.idealBuy ? 'signal-green' : 
-                            s.currentPrice <= s.reasonableBuy ? 'signal-yellow' : 
-                            s.currentPrice <= s.cautiousBuy ? 'signal-orange' : 'signal-red';
-        
-        const signalText = s.currentPrice <= s.idealBuy ? '理想买点' : 
-                          s.currentPrice <= s.reasonableBuy ? '合理买点' : 
-                          s.currentPrice <= s.cautiousBuy ? '谨慎买点' : '耐心等待';
-
-        html += `
-        <tr class="stock-row">
-            <td><strong style="color:#f8fafc">${s.name}</strong><div style="font-size:0.8rem;color:#64748b;margin-top:4px">${s.code} · ${s.sector}</div></td>
-            <td>
-                <div class="price-display">¥${s.currentPrice?.toFixed(2) || '--'}</div>
-                <span class="price-change ${changeClass}">${changeSign}${s.changePercent?.toFixed(2) || 0}%</span>
-            </td>
-            <td>
-                <div class="signal-badge ${signalClass}">${signalText}</div>
-                <div style="margin-top:8px;font-size:0.8rem;color:#94a3b8">
-                    理想: ¥${s.idealBuy?.toFixed(2) || '--'}<br>
-                    合理: ¥${s.reasonableBuy?.toFixed(2) || '--'}
-                </div>
-            </td>
-            <td>
-                ${mungerScore ? `<strong style="color:#a78bfa;font-size:1.2rem">${mungerScore.overall}/10</strong>` : '--'}
-            </td>
-            <td>
-                ${mungerScore ? `<span style="font-size:1.2rem">${mungerScore.advice_icon}</span> ${mungerScore.advice}` : '🔴 观望'}
-            </td>
-        </tr>`;
-    });
-    tbody.innerHTML = html;
-}
-
-function renderMungerStatus() {
-    if(!mungerData) return;
-    
-    const mp = mungerData.munger_portfolio;
-    const ms = mp.munger_decision_status;
-    
-    document.getElementById('cooling-status').textContent = ms.cooling_down ? '✅ 通过' : '⏳ 等待';
-    document.getElementById('checklist-progress').textContent = ms.checklist_progress;
-    document.getElementById('market-mood').textContent = `${ms.mood_emoji} ${ms.market_mood}`;
-    document.getElementById('portfolio-score').textContent = `${mp.average_score}/10`;
-}
-
-function renderChecklist(items) {
-    const container = document.getElementById('checklist-container');
-    if(!items) {
-        container.innerHTML = '<p style="color:#94a3b8">暂无数据</p>';
-        return;
-    }
-    
-    checklist = items;
-    let html = '<div style="margin-bottom:16px;color:#94a3b8;font-size:0.9rem">在做出任何买卖决策前，请完成以下检查：</div>';
-    
-    items.forEach((item, index) => {
-        html += `
-        <div class="checklist-item" onclick="toggleChecklist(${index})">
-            <div class="checklist-checkbox ${item.checked ? 'checked' : ''}" id="check-${index}"></div>
-            <div>${item.item}</div>
-        </div>`;
-    });
-    
-    container.innerHTML = html;
-    updateChecklistProgress();
-}
-
-function toggleChecklist(index) {
-    if(checklist[index]) {
-        checklist[index].checked = !checklist[index].checked;
-        const el = document.getElementById(`check-${index}`);
-        if(checklist[index].checked) el.classList.add('checked');
-        else el.classList.remove('checked');
+    // 渲染检查清单
+    function renderChecklist() {
+        const container = document.getElementById('checklist-container');
+        let html = '';
+        checklistItems.forEach((item, index) =&gt; {
+            const checked = checkedItems.has(index);
+            html += `
+                &lt;div class="checklist-item" onclick="toggleChecklistItem(${index})"&gt;
+                    &lt;div class="checklist-checkbox ${checked ? 'checked' : ''}"&gt;&lt;/div&gt;
+                    &lt;span&gt;${item}&lt;/span&gt;
+                &lt;/div&gt;
+            `;
+        });
+        container.innerHTML = html;
         updateChecklistProgress();
     }
-}
 
-function updateChecklistProgress() {
-    const checkedCount = checklist.filter(i => i.checked).length;
-    const total = checklist.length || 7;
-    const el = document.getElementById('checklist-progress');
-    if(el) el.textContent = `${checkedCount}/${total}`;
-}
-
-function renderBiases(biases) {
-    const container = document.getElementById('biases-container');
-    if(!biases || !biases.length) {
-        container.innerHTML = '<p style="color:#94a3b8">暂无数据</p>';
-        return;
+    // 切换检查状态
+    function toggleChecklistItem(index) {
+        if (checkedItems.has(index)) checkedItems.delete(index);
+        else checkedItems.add(index);
+        renderChecklist();
     }
-    
-    let html = '<div style="margin-bottom:16px;color:#94a3b8;font-size:0.9rem">请自我检查是否存在以下心理偏差：</div>';
-    biases.forEach(b => {
-        html += `<div class="bias-item">${b}</div>`;
-    });
-    container.innerHTML = html;
-}
 
-function renderMungerSuggestions(suggestions) {
-    const container = document.getElementById('munger-suggestions');
-    if(!suggestions || !suggestions.length) return;
-    
-    let html = '';
-    suggestions.forEach(s => {
-        html += `<li><strong>${s}</strong></li>`;
-    });
-    container.innerHTML = html;
-}
-
-function updateSummary() {
-    document.getElementById('total-count').textContent = stocksData.length;
-    
-    if(mungerData?.munger_scores) {
-        const scores = Object.values(mungerData.munger_scores);
-        const avgScore = scores.length ? 
-            (scores.reduce((a,b) => a + b.overall, 0) / scores.length).toFixed(1) : '--';
-        document.getElementById('munger-avg-score').textContent = avgScore;
-        
-        const holdCount = scores.filter(s => s.advice === '持有').length;
-        const waitCount = scores.filter(s => s.advice === '等待').length;
-        document.getElementById('hold-count').textContent = holdCount;
-        document.getElementById('wait-count').textContent = waitCount;
+    // 更新检查清单进度
+    function updateChecklistProgress() {
+        document.getElementById('checklist-progress').textContent = `${checkedItems.size}/${checklistItems.length}`;
     }
-}
 
-document.getElementById('refresh-btn').addEventListener('click', async () => {
-    const btn = document.getElementById('refresh-btn');
-    btn.disabled = true;
-    btn.textContent = '⏳ 刷新中...';
-    try {
-        await loadStocks();
-    } finally {
-        btn.disabled = false;
-        btn.textContent = '🔄 刷新数据';
-    }
-});
-
-document.getElementById('add-btn').addEventListener('click', async () => {
-    const keyword = document.getElementById('stock-keyword').value.trim();
-    const sector = document.getElementById('stock-sector').value.trim() || '其他';
-    
-    if(!keyword) {
-        alert('请输入股票名称或代码');
-        return;
-    }
-    
-    const btn = document.getElementById('add-btn');
-    btn.disabled = true;
-    btn.textContent = '⏳ 处理中...';
-    
-    try {
-        const res = await fetch(`/api/add?keyword=${encodeURIComponent(keyword)}&sector=${encodeURIComponent(sector)}`, {
-            method: 'POST'
+    // 渲染心理偏差
+    function renderBiases() {
+        const container = document.getElementById('biases-container');
+        let html = '';
+        biases.forEach(bias =&gt; {
+            html += `&lt;div class="bias-item"&gt;${bias}&lt;/div&gt;`;
         });
-        const data = await res.json();
-        
-        if(data.success) {
-            alert(`✅ 添加成功：${data.stock.name}`);
-            document.getElementById('stock-keyword').value = '';
-            loadStocks();
-        } else {
-            alert(data.error || '添加失败');
-        }
-    } catch(e) {
-        alert('请求失败，请确保API服务已启动');
-    } finally {
-        btn.disabled = false;
-        btn.textContent = '➕ 添加';
+        container.innerHTML = html;
     }
-});
 
-function closeModal() {
-    document.getElementById('stock-modal').classList.remove('active');
-}
-</script>
+    // 更新统计数据
+    function updateStats() {
+        const avgScore = stocks.reduce((sum, s) =&gt; sum + s.score, 0) / stocks.length;
+        document.getElementById('avg-score').textContent = avgScore.toFixed(1) + '/10';
+        document.getElementById('market-mood').textContent = '中性';
+    }
 
-</body>
-</html>
+    // 添加股票
+    document.getElementById('add-stock-btn').addEventListener('click', function() {
+        const keyword = document.getElementById('stock-keyword').value.trim();
+        const sector = document.getElementById('stock-sector').value.trim();
+        
+        if (keyword) {
+            alert('添加股票功能需要后端支持');
+        }
+    });
+
+    // 刷新数据
+    document.getElementById('refresh-btn').addEventListener('click', function() {
+        alert('刷新数据');
+        renderTable();
+    });
+
+    // 初始化页面
+    renderTable();
+    renderChecklist();
+    renderBiases();
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+
